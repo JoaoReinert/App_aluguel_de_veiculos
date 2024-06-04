@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'pages/CustomerDataPage/customerDataPage.dart';
+import 'pages/CustomerRegistrationPage/customerRegistrationPage.dart';
 import 'pages/HomePage/homePage.dart';
+import 'pages/ManagersRegisterPage/managersRegisterPage.dart';
+import 'pages/RentsPage/rentsPage.dart';
+import 'pages/VehicleRegistrationPage/vehicleRegistrationPage.dart';
 import 'theme.dart';
 
 class MyWidget extends StatelessWidget {
@@ -14,6 +19,11 @@ class MyWidget extends StatelessWidget {
         initialRoute: '/homePage',
         routes: {
           '/homePage' : (context) => const HomePage(),
+          '/customerRegistrationPage' : (context) => const CustomerRegistrationPage(),
+          '/managersRegisterPage' : (context) => const ManagersRegisterPage(),
+          '/vehicleRegistrationPage' : (context) => const VehicleRegistrationPage(),
+          '/rentsPage' : (context) => const RentsPage(),
+          '/customerDataPage' : (context) => const CustomerDataPage(),
         },
     );
   }

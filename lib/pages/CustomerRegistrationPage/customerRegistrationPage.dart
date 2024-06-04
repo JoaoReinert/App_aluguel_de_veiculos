@@ -83,6 +83,21 @@ class CustomerRegistrationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final listaNaMao = [
+      CustomerModel(
+          name: 'João',
+          phone: '47999473769',
+          cnpj: '89114230',
+          city: 'Gaspar',
+          state: 'SC'),
+      CustomerModel(
+          name: 'Felipe',
+          phone: '473484020',
+          cnpj: '3948204',
+          city: 'Gaspar',
+          state: 'SC')
+    ];
+
     return ChangeNotifierProvider(
       create: (context) => FunctionsCustomer(),
       child: Consumer<FunctionsCustomer>(
@@ -102,12 +117,29 @@ class CustomerRegistrationPage extends StatelessWidget {
                 ),
               ],
             ),
-            body: ListView.builder(
-              itemCount: state._listCustomer.length,
-              itemBuilder: (context, index) {
-                final customer = state._listCustomer[index];
-                return ListTile(title: Text(customer.name), onTap: () {});
-              },
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                itemCount: listaNaMao.length,
+                itemBuilder: (context, index) {
+                  final customer = listaNaMao[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: ListTile(
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      title: Text(
+                        customer.name,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      subtitle: Text(customer.cnpj),
+                      onTap: () {},
+                    ),
+                  );
+                },
+              ),
             ),
           );
         },
