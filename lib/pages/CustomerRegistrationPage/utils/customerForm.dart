@@ -12,7 +12,7 @@ class CustomerForm extends StatefulWidget {
 }
 
 class _CustomerFormState extends State<CustomerForm> {
-  final _formKey = GlobalKey<FormState>();
+  final _customerForm = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class _CustomerFormState extends State<CustomerForm> {
           child: Consumer<FunctionsCustomer>(
             builder: (_,state,__) {
               return Form(
-                key: _formKey,
+                key: _customerForm,
                 child: Column(
                   children: [
                     TextFormField(

@@ -4,7 +4,7 @@ final theme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   textTheme: Typography.whiteCupertino,
   appBarTheme: const AppBarTheme(
-    toolbarHeight: 80,
+    toolbarHeight: 75,
     backgroundColor: Colors.blue,
     titleTextStyle: TextStyle(
       fontSize: 20,
@@ -12,7 +12,7 @@ final theme = ThemeData(
     ),
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Colors.grey,
+    backgroundColor: Colors.red,
     selectedItemColor: Colors.blue,
     unselectedItemColor: Colors.white,
     selectedIconTheme: IconThemeData(color: Colors.blue),
@@ -33,8 +33,7 @@ InputDecoration decorationForm(String label) {
       ),
     ),
     focusedBorder: const OutlineInputBorder(
-      borderSide:
-          BorderSide(color: Colors.blue, width: 2),
+      borderSide: BorderSide(color: Colors.blue, width: 2),
       borderRadius: BorderRadius.all(
         Radius.circular(8),
       ),

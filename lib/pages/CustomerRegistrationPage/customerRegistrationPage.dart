@@ -125,17 +125,23 @@ class CustomerRegistrationPage extends StatelessWidget {
                   final customer = listaNaMao[index];
                   return Padding(
                     padding: const EdgeInsets.all(2),
-                    child: ListTile(
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Colors.black),
-                        borderRadius: BorderRadius.circular(8),
+                    child: Card(
+                      elevation: 10,
+                      shadowColor: Colors.black,
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Colors.black, width: 1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        title: Text(
+                          customer.name,
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                        subtitle: Text('CNPJ: ${customer.cnpj}'),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/customerDataPage');
+                        },
                       ),
-                      title: Text(
-                        customer.name,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                      subtitle: Text(customer.cnpj),
-                      onTap: () {},
                     ),
                   );
                 },
