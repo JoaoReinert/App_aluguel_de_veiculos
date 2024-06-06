@@ -126,11 +126,12 @@ class CustomerRegistrationPage extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(2),
                     child: Card(
-                      elevation: 10,
+                      color: const Color.fromARGB(255, 203, 202, 202),
+                      elevation: 3,
                       shadowColor: Colors.black,
                       child: ListTile(
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Colors.black, width: 1),
+                          side: const BorderSide(color: Colors.white, width: 1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         title: Text(

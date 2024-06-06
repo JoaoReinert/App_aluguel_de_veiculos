@@ -18,11 +18,7 @@ class _CustomerDataFormState extends State<CustomerDataForm> {
       key: _customerDataForm,
       child: Column(
           children: [
-            TextFormField(
-              decoration: InputDecoration(
-                label: Text('Name')
-              ),
-            ),
+            
           ],
       ),
     );
