@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'utils/managerButton.dart';
 import 'utils/managerForm.dart';
 
+///
 class FunctionManager extends ChangeNotifier {
   void alertDialog(BuildContext context) {
     showDialog(

@@ -1,80 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../controllers/database.dart';
 import '../../models/customersModel.dart';
 import 'utils/customerButton.dart';
-import 'utils/customerForm.dart';
 import '../../../generalControllers.dart';
+import 'utils/customer_dialog.dart';
 
 class FunctionsCustomer extends ChangeNotifier {
+  FunctionsCustomer() {
+    load();
+  }
+
+  final controller = CustomerController();
+
   final _controllerName = TextEditingController();
   final _controllerPhone = TextEditingController();
   final _controllerCNPJ = TextEditingController();
   final _controllerCity = TextEditingController();
   States? _controllerStates;
+  final _listCustomer = <CustomerModel>[];
 
   TextEditingController get controllerName => _controllerName;
+
   TextEditingController get controllerPhone => _controllerPhone;
+
   TextEditingController get controllerCNPJ => _controllerCNPJ;
+
   TextEditingController get controllerCity => _controllerCity;
+
   States? get controllerStates => _controllerStates;
 
-  final _listCustomer = <CustomerModel>[];
   List<CustomerModel> get listCustomer => _listCustomer;
 
-  void include(CustomerModel customer) {
-    _listCustomer.add(customer);
+  Future<void> load() async {
+    final list = await controller.select();
+
+    listCustomer.clear();
+    listCustomer.addAll(list);
+
     notifyListeners();
   }
 
-  void insert() {
+  Future<void> insert() async {
     final customers = CustomerModel(
-        name: controllerName.text,
-        phone: controllerPhone.text,
-        cnpj: controllerCNPJ.text,
-        city: controllerCity.text,
-        state: controllerStates.toString());
+      name: controllerName.text,
+      phone: controllerPhone.text,
+      cnpj: controllerCNPJ.text,
+      city: controllerCity.text,
+      state: controllerStates?.toString() ?? '',
+    );
 
-    include(customers);
+    await controller.insert(customers);
+    await load();
+
+    controllerName.clear();
+    controllerPhone.clear();
+    controllerCNPJ.clear();
+    controllerCity.clear();
+
+    notifyListeners();
   }
 
-  void alertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return SingleChildScrollView(
-          child: AlertDialog(
-            shape: const BeveledRectangleBorder(),
-            backgroundColor: Colors.white,
-            title: const Text(
-              'Customer Registration',
-              style: TextStyle(color: Colors.blue),
-            ),
-            content: const CustomerForm(),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  insert();
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'Save',
-                  style: TextStyle(color: Colors.blue),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  Future<void> delete(CustomerModel customer) async {
+    await controller.delete(customer);
+    await load();
+
+    notifyListeners();
   }
 }
 
@@ -83,21 +74,6 @@ class CustomerRegistrationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final listaNaMao = [
-      CustomerModel(
-          name: 'João',
-          phone: '47999473769',
-          cnpj: '89114230',
-          city: 'Gaspar',
-          state: 'SC'),
-      CustomerModel(
-          name: 'Felipe',
-          phone: '473484020',
-          cnpj: '3948204',
-          city: 'Gaspar',
-          state: 'SC')
-    ];
-
     return ChangeNotifierProvider(
       create: (context) => FunctionsCustomer(),
       child: Consumer<FunctionsCustomer>(
@@ -111,7 +87,7 @@ class CustomerRegistrationPage extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: CustomerButton(
                     onpressed: () {
-                      state.alertDialog(context);
+                      showCustomerDialog(context, state);
                     },
                   ),
                 ),
@@ -120,9 +96,9 @@ class CustomerRegistrationPage extends StatelessWidget {
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView.builder(
-                itemCount: listaNaMao.length,
+                itemCount: state.listCustomer.length,
                 itemBuilder: (context, index) {
-                  final customer = listaNaMao[index];
+                  final customer = state.listCustomer[index];
                   return Padding(
                     padding: const EdgeInsets.all(2),
                     child: Card(
@@ -140,8 +116,18 @@ class CustomerRegistrationPage extends StatelessWidget {
                         ),
                         subtitle: Text('CNPJ: ${customer.cnpj}'),
                         onTap: () {
-                          Navigator.pushNamed(context, '/customerDataPage');
+                          Navigator.pushNamed(context, '/customerDataPage',
+                              arguments: customer);
                         },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.delete),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

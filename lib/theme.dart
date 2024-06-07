@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 
-final theme = ThemeData(
-  scaffoldBackgroundColor: Colors.white,
-  textTheme: Typography.whiteCupertino,
-  appBarTheme: const AppBarTheme(
-    toolbarHeight: 75,
-    backgroundColor: Colors.blue,
-    titleTextStyle: TextStyle(
-      fontSize: 20,
-      color: Colors.white,
+ThemeData theme(BuildContext context) {
+  return Theme.of(context).copyWith(
+    scaffoldBackgroundColor: Colors.white,
+    textTheme: Typography.whiteCupertino,
+    appBarTheme: const AppBarTheme(
+      toolbarHeight: 75,
+      backgroundColor: Colors.blue,
+      titleTextStyle: TextStyle(
+        fontSize: 20,
+        color: Colors.white,
+      ),
     ),
-  ),
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Colors.red,
-    selectedItemColor: Colors.blue,
-    unselectedItemColor: Colors.white,
-    selectedIconTheme: IconThemeData(color: Colors.blue),
-    unselectedIconTheme: IconThemeData(color: Colors.white),
-    selectedLabelStyle: TextStyle(color: Colors.blue),
-    unselectedLabelStyle: TextStyle(color: Colors.white),
-  ),
-);
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.red,
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.grey,
+      unselectedLabelStyle: TextStyle(color: Colors.grey)
+    ),
+  );
+}
 
 InputDecoration decorationForm(String label) {
   return InputDecoration(

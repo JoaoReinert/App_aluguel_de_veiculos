@@ -15,7 +15,7 @@ class MyWidget extends StatelessWidget {
     
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: theme,
+        theme: theme(context),
         initialRoute: '/homePage',
         routes: {
           '/homePage' : (context) => const HomePage(),
