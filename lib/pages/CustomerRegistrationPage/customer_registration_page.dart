@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../controllers/database.dart';
+import '../../enum_states.dart';
 import '../../models/customers_model.dart';
-import 'utils/customerButton.dart';
-import '../../../generalControllers.dart';
+import 'utils/customer_button.dart';
 import 'utils/customer_dialog.dart';
 
+///provider referente ao estado dos clientes
 class FunctionsCustomer extends ChangeNotifier {
+  ///instancia do provider para sempre que for chamado, ele chamar a funcao load
   FunctionsCustomer() {
     load();
   }
-
+  /// Controlador para operações relacionadas aos clientes
   final controller = CustomerController();
 
   final _controllerName = TextEditingController();
@@ -20,18 +23,19 @@ class FunctionsCustomer extends ChangeNotifier {
   States? _controllerStates;
   final _listCustomer = <CustomerModel>[];
 
+  /// Getter para o controlador de texto do campo nome
   TextEditingController get controllerName => _controllerName;
-
+  /// Getter para o controlador de texto do campo telefone
   TextEditingController get controllerPhone => _controllerPhone;
-
+  /// Getter para o controlador de texto do campo cnpj
   TextEditingController get controllerCNPJ => _controllerCNPJ;
-
+  /// Getter para o controlador de texto do campo cidade
   TextEditingController get controllerCity => _controllerCity;
-
+   /// Getter para o controlador do estado do cliente
   States? get controllerStates => _controllerStates;
-
+  /// Getter para a lista de modelos de cliente
   List<CustomerModel> get listCustomer => _listCustomer;
-
+  /// Função assíncrona para carregar os dados dos clientes
   Future<void> load() async {
     final list = await controller.select();
 
@@ -40,7 +44,7 @@ class FunctionsCustomer extends ChangeNotifier {
 
     notifyListeners();
   }
-
+  /// Função assíncrona para inserir um novo cliente
   Future<void> insert() async {
     final customers = CustomerModel(
       name: controllerName.text,
@@ -60,7 +64,7 @@ class FunctionsCustomer extends ChangeNotifier {
 
     notifyListeners();
   }
-
+  /// Função assíncrona para deletar um cliente
   Future<void> delete(CustomerModel customer) async {
     await controller.delete(customer);
     await load();
@@ -68,8 +72,9 @@ class FunctionsCustomer extends ChangeNotifier {
     notifyListeners();
   }
 }
-
+///criacao da tela de resgistro do cliente
 class CustomerRegistrationPage extends StatelessWidget {
+  ///instancia da classe 
   const CustomerRegistrationPage({super.key});
 
   @override

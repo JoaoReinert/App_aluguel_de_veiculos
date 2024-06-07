@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../generalControllers.dart';
+import '../../../enum_states.dart';
 import '../../../theme.dart';
-import '../customerRegistrationPage.dart';
-
+import '../customer_registration_page.dart';
+///criacao do formulario para cadastrar um cliente
 class CustomerForm extends StatelessWidget {
+  ///instancia para passar o provider na tela
   const CustomerForm({super.key, required this.state});
-
+  ///state para usar o provider e passar os controllers
   final FunctionsCustomer state;
 
   @override
   Widget build(BuildContext context) {
-    final _customerForm = GlobalKey<FormState>();
+    final customerForm = GlobalKey<FormState>();
     return Form(
-      key: _customerForm,
+      key: customerForm,
       child: Column(
         children: [
           TextFormField(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../customerRegistrationPage.dart';
-import 'customerForm.dart';
+import '../customer_registration_page.dart';
+import 'customer_form.dart';
 
 Future<void> showCustomerDialog(BuildContext context, FunctionsCustomer state) async {
   showDialog(

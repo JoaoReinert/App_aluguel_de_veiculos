@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'utils/customerDataForm.dart';
-
+///criacao da pagina de dados do cliente
 class CustomerDataPage extends StatelessWidget {
+  ///instancia da pagina
   const CustomerDataPage({super.key});
 
   @override

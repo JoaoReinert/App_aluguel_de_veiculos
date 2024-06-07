@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-
+///criacao da estilizacao do botao de cadastro para as telas
 class CustomerButton extends StatelessWidget {
+  ///instancia para passar a funcao do botao
   const CustomerButton({
     super.key,
     required this.onpressed
   });
 
+  ///funcao para na tela poder passar uma funcao quando ele ser precionado
   final void Function() onpressed;
 
   @override
