@@ -1,8 +1,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import '../models/customers_model.dart';
 
-import '../models/customersModel.dart';
-
+///iniciando o banco de dados
 Future<Database> getDatabase() async {
   final path = join(
     await getDatabasesPath(),
@@ -17,6 +17,7 @@ Future<Database> getDatabase() async {
     version: 1,
   );
 }
+
 
 class CustomerTable {
   static const String createTable = '''
@@ -57,7 +58,9 @@ class CustomerTable {
   }
 }
 
+///classe para criancao de metodos insert e delete
 class CustomerController {
+  ///funcao insert para inserir dados no banco
   Future<void> insert(CustomerModel customer) async {
     final database = await getDatabase();
     final map = CustomerTable.tomap(customer);
@@ -67,6 +70,7 @@ class CustomerController {
     return;
   }
 
+  ///funcao delete para deletar dados no banco
   Future<void> delete(CustomerModel customer) async {
     final database = await getDatabase();
 
@@ -77,6 +81,7 @@ class CustomerController {
     );
   }
 
+  ///funcao select para pegar dados no banco
   Future<List<CustomerModel>> select() async {
     final database = await getDatabase();
     final List<Map<String, dynamic>> result = await database.query(

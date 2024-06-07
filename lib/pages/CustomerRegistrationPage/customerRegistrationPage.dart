@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/database.dart';
-import '../../models/customersModel.dart';
+import '../../models/customers_model.dart';
 import 'utils/customerButton.dart';
 import '../../../generalControllers.dart';
 import 'utils/customer_dialog.dart';
