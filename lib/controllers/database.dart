@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import '../enum_states.dart';
 import '../models/customers_model.dart';
 
 ///iniciando o banco de dados
@@ -18,7 +19,6 @@ Future<Database> getDatabase() async {
   );
 }
 
-
 class CustomerTable {
   static const String createTable = '''
   CREATE TABLE $tableName(
@@ -27,21 +27,17 @@ class CustomerTable {
   $phone TEXT NOT NULL,
   $cnpj TEXT NOT NULL,
   $city TEXT NOT NULL,
-  $state TEXT NOT NULL,
+  $state TEXT NOT NULL
+  );
   ''';
 
   static const String tableName = 'customer';
 
   static const String id = 'id';
-
   static const String name = 'name';
-
   static const String phone = 'phone';
-
   static const String cnpj = 'cnpj';
-
   static const String city = 'city';
-
   static const String state = 'state';
 
   static Map<String, dynamic> tomap(CustomerModel customer) {
@@ -66,15 +62,13 @@ class CustomerController {
     final map = CustomerTable.tomap(customer);
 
     await database.insert(CustomerTable.tableName, map);
-
-    return;
   }
 
   ///funcao delete para deletar dados no banco
   Future<void> delete(CustomerModel customer) async {
     final database = await getDatabase();
 
-    database.delete(
+    await database.delete(
       CustomerTable.tableName,
       where: '${CustomerTable.id} = ?',
       whereArgs: [customer.id],
@@ -91,16 +85,14 @@ class CustomerController {
     var list = <CustomerModel>[];
 
     for (final item in result) {
-      list.add(
-        CustomerModel(
-          id: item[CustomerTable.id],
-          name: item[CustomerTable.name],
-          phone: item[CustomerTable.phone],
-          cnpj: item[CustomerTable.cnpj],
-          city: item[CustomerTable.city],
-          state: item[CustomerTable.state],
-        ),
-      );
+      list.add(CustomerModel(
+        id: item[CustomerTable.id],
+        name: item[CustomerTable.name],
+        phone: item[CustomerTable.phone],
+        cnpj: item[CustomerTable.cnpj],
+        city: item[CustomerTable.city],
+        state: item[CustomerTable.state],
+      ));
     }
 
     return list;

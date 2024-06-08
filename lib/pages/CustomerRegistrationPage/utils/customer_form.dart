@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import '../../../enum_states.dart';
 import '../../../theme.dart';
 import '../customer_registration_page.dart';
+
 ///criacao do formulario para cadastrar um cliente
 class CustomerForm extends StatelessWidget {
   ///instancia para passar o provider na tela
-  const CustomerForm({super.key, required this.state});
+  const CustomerForm({
+    super.key,
+    required this.state,
+    required this.customerFormKey,
+  });
+
   ///state para usar o provider e passar os controllers
   final FunctionsCustomer state;
+  ///chave do formulario para validar
+  final GlobalKey<FormState> customerFormKey;
 
   @override
   Widget build(BuildContext context) {
-    final customerForm = GlobalKey<FormState>();
     return Form(
-      key: customerForm,
+      key: customerFormKey,
       child: Column(
         children: [
           TextFormField(
@@ -80,7 +87,9 @@ class CustomerForm extends StatelessWidget {
           DropdownButtonFormField<States>(
             value: state.controllerStates,
             onChanged: (value) {
-              if (value != null) {}
+              if (value != null) {
+              
+              }
             },
             items: States.values.map(
               (state) {

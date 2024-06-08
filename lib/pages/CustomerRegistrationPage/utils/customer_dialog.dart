@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../customer_registration_page.dart';
 import 'customer_form.dart';
 
-Future<void> showCustomerDialog(BuildContext context, FunctionsCustomer state) async {
+Future<void> showCustomerDialog(
+    BuildContext context, FunctionsCustomer state) async {
+  final customerFormKey = GlobalKey<FormState>();
   showDialog(
     context: context,
     builder: (context) {
@@ -16,6 +18,7 @@ Future<void> showCustomerDialog(BuildContext context, FunctionsCustomer state) a
           ),
           content: CustomerForm(
             state: state,
+            customerFormKey: customerFormKey,
           ),
           actions: [
             TextButton(
@@ -29,7 +32,15 @@ Future<void> showCustomerDialog(BuildContext context, FunctionsCustomer state) a
             ),
             TextButton(
               onPressed: () async {
-                await state.insert();
+                if (customerFormKey.currentState!.validate()) {
+                  await state.insert();
+                  Navigator.of(context).pop();
+                  print('Name: ${state.controllerName.text}');
+                  print('Phone: ${state.controllerPhone.text}');
+                  print('CNPJ: ${state.controllerCNPJ.text}');
+                  print('City: ${state.controllerCity.text}');
+                  print('State: ${state.controllerStates?.toString() ?? ''}');
+                }
               },
               child: const Text(
                 'Save',

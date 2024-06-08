@@ -13,6 +13,7 @@ class FunctionsCustomer extends ChangeNotifier {
   FunctionsCustomer() {
     load();
   }
+
   /// Controlador para operações relacionadas aos clientes
   final controller = CustomerController();
 
@@ -25,25 +26,30 @@ class FunctionsCustomer extends ChangeNotifier {
 
   /// Getter para o controlador de texto do campo nome
   TextEditingController get controllerName => _controllerName;
+
   /// Getter para o controlador de texto do campo telefone
   TextEditingController get controllerPhone => _controllerPhone;
+
   /// Getter para o controlador de texto do campo cnpj
   TextEditingController get controllerCNPJ => _controllerCNPJ;
+
   /// Getter para o controlador de texto do campo cidade
   TextEditingController get controllerCity => _controllerCity;
-   /// Getter para o controlador do estado do cliente
+
+  /// Getter para o controlador do estado do cliente
   States? get controllerStates => _controllerStates;
+
   /// Getter para a lista de modelos de cliente
   List<CustomerModel> get listCustomer => _listCustomer;
+
   /// Função assíncrona para carregar os dados dos clientes
   Future<void> load() async {
     final list = await controller.select();
-
-    listCustomer.clear();
-    listCustomer.addAll(list);
-
+    _listCustomer.clear();
+    _listCustomer.addAll(list);
     notifyListeners();
   }
+
   /// Função assíncrona para inserir um novo cliente
   Future<void> insert() async {
     final customers = CustomerModel(
@@ -51,7 +57,7 @@ class FunctionsCustomer extends ChangeNotifier {
       phone: controllerPhone.text,
       cnpj: controllerCNPJ.text,
       city: controllerCity.text,
-      state: controllerStates?.toString() ?? '',
+      state: controllerStates?.toString().split('.').last ?? '',
     );
 
     await controller.insert(customers);
@@ -61,9 +67,10 @@ class FunctionsCustomer extends ChangeNotifier {
     controllerPhone.clear();
     controllerCNPJ.clear();
     controllerCity.clear();
-
+    _controllerStates = null;
     notifyListeners();
   }
+
   /// Função assíncrona para deletar um cliente
   Future<void> delete(CustomerModel customer) async {
     await controller.delete(customer);
@@ -72,9 +79,10 @@ class FunctionsCustomer extends ChangeNotifier {
     notifyListeners();
   }
 }
+
 ///criacao da tela de resgistro do cliente
 class CustomerRegistrationPage extends StatelessWidget {
-  ///instancia da classe 
+  ///instancia da classe
   const CustomerRegistrationPage({super.key});
 
   @override
