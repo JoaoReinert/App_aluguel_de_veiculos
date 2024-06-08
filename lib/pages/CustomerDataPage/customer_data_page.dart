@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+
+import '../../models/customers_model.dart';
+
 ///criacao da pagina de dados do cliente
 class CustomerDataPage extends StatelessWidget {
   ///instancia da pagina
-  const CustomerDataPage({super.key});
+  const CustomerDataPage({super.key, required this.customer});
+
+  final CustomerModel customer;
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +23,16 @@ class CustomerDataPage extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: const Padding(
-          padding: EdgeInsets.all(20),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               Center(
                 child: Column(
                   children: [
                     Text(
-                      'João Claudio Reinert',
-                      style: TextStyle(color: Colors.black, fontSize: 35),
+                      customer.name,
+                      style: const TextStyle(color: Colors.black, fontSize: 35),
                     ),
                   ],
                 ),
@@ -35,104 +40,108 @@ class CustomerDataPage extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Divider(),
-                  SizedBox(
+                  const Divider(),
+                  const SizedBox(
                     height: 20,
                   ),
-                  Text('Personal information',
+                  const Text('Personal information',
                       style: TextStyle(color: Colors.black, fontSize: 25)),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
                     children: [
-                      Icon(Icons.phone),
-                      SizedBox(
+                      const Icon(Icons.phone),
+                      const SizedBox(
                         width: 10,
                       ),
-                      Text(
+                      const Text(
                         'Phone -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        '47999473769',
-                        style: TextStyle(color: Colors.black, fontSize: 18),
+                        customer.phone,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
                     children: [
-                      Icon(Icons.business),
-                      SizedBox(
+                      const Icon(Icons.business),
+                      const SizedBox(
                         width: 10,
                       ),
-                      Text(
+                      const Text(
                         'CNPJ -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        '14028701910',
-                        style: TextStyle(color: Colors.black, fontSize: 18),
+                        customer.cnpj,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
                     children: [
-                      Icon(Icons.location_on),
-                      SizedBox(
+                      const Icon(Icons.location_on),
+                      const SizedBox(
                         width: 10,
                       ),
-                      Text(
+                      const Text(
                         'City -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        'Gaspar',
-                        style: TextStyle(color: Colors.black, fontSize: 18),
+                        customer.city,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
                     children: [
-                      Icon(Icons.map),
-                      SizedBox(
+                      const Icon(Icons.map),
+                      const SizedBox(
                         width: 10,
                       ),
-                      Text(
+                      const Text(
                         'State -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        'SC',
-                        style: TextStyle(color: Colors.black, fontSize: 18),
+                        customer.state.toString().split('.').last.toUpperCase(),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
-                  Row(
+                  const Row(
                     children: [
                       Icon(Icons.work),
                       SizedBox(

@@ -21,7 +21,7 @@ class FunctionsCustomer extends ChangeNotifier {
   final _controllerPhone = TextEditingController();
   final _controllerCNPJ = TextEditingController();
   final _controllerCity = TextEditingController();
-  States? _controllerStates;
+  States? _selectItem;
   final _listCustomer = <CustomerModel>[];
 
   /// Getter para o controlador de texto do campo nome
@@ -36,8 +36,7 @@ class FunctionsCustomer extends ChangeNotifier {
   /// Getter para o controlador de texto do campo cidade
   TextEditingController get controllerCity => _controllerCity;
 
-  /// Getter para o controlador do estado do cliente
-  States? get controllerStates => _controllerStates;
+  States? get selectItem => _selectItem;
 
   /// Getter para a lista de modelos de cliente
   List<CustomerModel> get listCustomer => _listCustomer;
@@ -57,7 +56,7 @@ class FunctionsCustomer extends ChangeNotifier {
       phone: controllerPhone.text,
       cnpj: controllerCNPJ.text,
       city: controllerCity.text,
-      state: controllerStates?.toString().split('.').last ?? '',
+      state: selectItem,
     );
 
     await controller.insert(customers);
@@ -67,7 +66,7 @@ class FunctionsCustomer extends ChangeNotifier {
     controllerPhone.clear();
     controllerCNPJ.clear();
     controllerCity.clear();
-    _controllerStates = null;
+    _selectItem = null;
     notifyListeners();
   }
 
@@ -76,6 +75,11 @@ class FunctionsCustomer extends ChangeNotifier {
     await controller.delete(customer);
     await load();
 
+    notifyListeners();
+  }
+
+  void updateState(States newValue) {
+    _selectItem = newValue;
     notifyListeners();
   }
 }
@@ -119,6 +123,10 @@ class CustomerRegistrationPage extends StatelessWidget {
                       elevation: 3,
                       shadowColor: Colors.black,
                       child: ListTile(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/customerDataPage',
+                              arguments: customer);
+                        },
                         shape: RoundedRectangleBorder(
                           side: const BorderSide(color: Colors.white, width: 1),
                           borderRadius: BorderRadius.circular(8),
@@ -128,15 +136,13 @@ class CustomerRegistrationPage extends StatelessWidget {
                           style: const TextStyle(fontSize: 20),
                         ),
                         subtitle: Text('CNPJ: ${customer.cnpj}'),
-                        onTap: () {
-                          Navigator.pushNamed(context, '/customerDataPage',
-                              arguments: customer);
-                        },
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                state.delete(customer);
+                              },
                               icon: const Icon(Icons.delete),
                             ),
                           ],

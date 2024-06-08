@@ -14,6 +14,7 @@ class CustomerForm extends StatelessWidget {
 
   ///state para usar o provider e passar os controllers
   final FunctionsCustomer state;
+
   ///chave do formulario para validar
   final GlobalKey<FormState> customerFormKey;
 
@@ -31,7 +32,7 @@ class CustomerForm extends StatelessWidget {
             decoration: decorationForm('Name'),
             validator: (value) {
               if (value != null && value.isEmpty) {
-                return 'Enter the name';
+                return 'Enter the customer name';
               }
               return null;
             },
@@ -46,7 +47,7 @@ class CustomerForm extends StatelessWidget {
             decoration: decorationForm('Phone'),
             validator: (value) {
               if (value != null && value.isEmpty) {
-                return 'Enter the customers telephone number';
+                return 'Enter the telephone number';
               }
               return null;
             },
@@ -85,17 +86,23 @@ class CustomerForm extends StatelessWidget {
             height: 10,
           ),
           DropdownButtonFormField<States>(
-            value: state.controllerStates,
+            validator: (value) {
+              if (value == null) {
+                return 'Enter the customers state';
+              }
+              return null;
+            },
+            value: state.selectItem,
             onChanged: (value) {
               if (value != null) {
-              
+                state.updateState(value);
               }
             },
             items: States.values.map(
               (state) {
                 return DropdownMenuItem(
                   value: state,
-                  child: Text(state.toString().split('.').last),
+                  child: Text(state.toString().split('.').last.toUpperCase()),
                 );
               },
             ).toList(),

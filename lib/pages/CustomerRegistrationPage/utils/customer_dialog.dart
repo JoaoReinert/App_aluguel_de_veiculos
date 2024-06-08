@@ -35,11 +35,7 @@ Future<void> showCustomerDialog(
                 if (customerFormKey.currentState!.validate()) {
                   await state.insert();
                   Navigator.of(context).pop();
-                  print('Name: ${state.controllerName.text}');
-                  print('Phone: ${state.controllerPhone.text}');
-                  print('CNPJ: ${state.controllerCNPJ.text}');
-                  print('City: ${state.controllerCity.text}');
-                  print('State: ${state.controllerStates?.toString() ?? ''}');
+                 
                 }
               },
               child: const Text(

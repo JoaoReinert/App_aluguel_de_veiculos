@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'models/customers_model.dart';
 import 'pages/CustomerDataPage/customer_data_page.dart';
 import 'pages/CustomerRegistrationPage/customer_registration_page.dart';
 import 'pages/HomePage/home_page.dart';
@@ -19,6 +20,20 @@ class MyWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: theme(context),
       initialRoute: '/homePage',
+      // criando on generate para passar os argumentos para
+      // usar navigator.pushnamed para tela de dados dos clientes
+       onGenerateRoute: (settings) {
+        if (settings.name == '/customerDataPage') {
+          final customer = settings.arguments as CustomerModel;
+          return MaterialPageRoute(
+            builder: (context) {
+              return CustomerDataPage(customer: customer);
+            },
+          );
+        }
+        // Adicione outras rotas aqui se necessário
+        return MaterialPageRoute(builder: (context) => const HomePage());
+      },
       routes: {
         '/homePage': (context) => const HomePage(),
         '/customerRegistrationPage': (context) =>
@@ -27,7 +42,6 @@ class MyWidget extends StatelessWidget {
         '/vehicleRegistrationPage': (context) =>
             const VehicleRegistrationPage(),
         '/rentsPage': (context) => const RentsPage(),
-        '/customerDataPage': (context) => const CustomerDataPage(),
       },
     );
   }

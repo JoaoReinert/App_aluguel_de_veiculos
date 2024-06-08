@@ -1,7 +1,9 @@
+import '../enum_states.dart';
+
 ///classe modelo dos clientes
 class CustomerModel {
   ///id para identificar no banco qual cliente que é
-  final String? id;
+  late int? id;
   ///nome do cliente
   final String name;
   ///telefone do cliente
@@ -11,7 +13,7 @@ class CustomerModel {
   ///cidade do cliente
   final String city;
   ///estado do cliente
-  final String state;
+  final States? state;
 
   ///instacia do modelo para ser obrigatorio a passagem de dados
   CustomerModel(

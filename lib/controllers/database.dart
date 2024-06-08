@@ -48,7 +48,7 @@ class CustomerTable {
     map[CustomerTable.phone] = customer.phone;
     map[CustomerTable.cnpj] = customer.cnpj;
     map[CustomerTable.city] = customer.city;
-    map[CustomerTable.state] = customer.state;
+    map[CustomerTable.state] = customer.state.toString();
 
     return map;
   }
@@ -62,6 +62,7 @@ class CustomerController {
     final map = CustomerTable.tomap(customer);
 
     await database.insert(CustomerTable.tableName, map);
+    return;
   }
 
   ///funcao delete para deletar dados no banco
@@ -91,7 +92,10 @@ class CustomerController {
         phone: item[CustomerTable.phone],
         cnpj: item[CustomerTable.cnpj],
         city: item[CustomerTable.city],
-        state: item[CustomerTable.state],
+        state: States.values.firstWhere(
+          (element) =>
+              element.toString() == (item[CustomerTable.state] ?? States.sc),
+        ),
       ));
     }
 
