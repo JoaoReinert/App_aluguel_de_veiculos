@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'utils/vehicleButton.dart';
-
+///criacao da tela de resgistro do veiculo
 class VehicleRegistrationPage extends StatelessWidget {
+  ///instancia da classe
   const VehicleRegistrationPage({super.key});
 
   @override

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../enum_states.dart';
 import '../../../theme.dart';
-
+///formulario referente ao cadastro de gerentes
 class ManagerForm extends StatefulWidget {
+  ///instancia da classe
   const ManagerForm({super.key});
 
   @override

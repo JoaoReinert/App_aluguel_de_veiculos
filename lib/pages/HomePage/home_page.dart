@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../CustomerRegistrationPage/customer_registration_page.dart';
-import '../ManagersRegisterPage/managersRegisterPage.dart';
-import '../RentsPage/rentsPage.dart';
-import '../VehicleRegistrationPage/vehicleRegistrationPage.dart';
+import '../ManagersRegisterPage/managers_register_page.dart';
+import '../RentsPage/rents_page.dart';
+import '../VehicleRegistrationPage/vehicle_registration_page.dart';
 
 ///criacao da home page para ultilizar o bottom navigation bar
 class HomePage extends StatefulWidget {

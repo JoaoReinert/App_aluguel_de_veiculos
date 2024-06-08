@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'utils/managerButton.dart';
-import 'utils/managerForm.dart';
+import 'utils/manager_button.dart';
+import 'utils/manager_form.dart';
 
-///
+///provider referente ao estado dos gerentes
 class FunctionManager extends ChangeNotifier {
   void alertDialog(BuildContext context) {
     showDialog(
@@ -41,8 +41,9 @@ class FunctionManager extends ChangeNotifier {
         });
   }
 }
-
+///criacao da tela de resgistro do gerente
 class ManagersRegisterPage extends StatelessWidget {
+  ///instancia da classe
   const ManagersRegisterPage({super.key});
 
   @override

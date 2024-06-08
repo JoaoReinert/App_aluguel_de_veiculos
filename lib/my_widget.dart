@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'pages/CustomerDataPage/customer_data_page.dart';
 import 'pages/CustomerRegistrationPage/customer_registration_page.dart';
 import 'pages/HomePage/home_page.dart';
-import 'pages/ManagersRegisterPage/managersRegisterPage.dart';
-import 'pages/RentsPage/rentsPage.dart';
-import 'pages/VehicleRegistrationPage/vehicleRegistrationPage.dart';
+import 'pages/ManagersRegisterPage/managers_register_page.dart';
+import 'pages/RentsPage/rents_page.dart';
+import 'pages/VehicleRegistrationPage/vehicle_registration_page.dart';
 import 'theme.dart';
 
 ///criacao da classe onde ira ficar todo meu aplicativo,
