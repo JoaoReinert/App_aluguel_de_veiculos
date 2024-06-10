@@ -15,7 +15,13 @@ Future<Database> getDatabase() async {
     onCreate: (db, version) {
       db.execute(CustomerTable.createTable);
     },
-    version: 1,
+
+     onUpgrade: (db, oldVersion, newVersion) async {
+      if (oldVersion < 2) {
+        await db.execute('ALTER TABLE ${CustomerTable.tableName} ADD COLUMN ${CustomerTable.companyName} TEXT NOT NULL DEFAULT ""');
+      }
+    },
+    version: 2,
   );
 }
 
@@ -27,7 +33,8 @@ class CustomerTable {
   $phone TEXT NOT NULL,
   $cnpj TEXT NOT NULL,
   $city TEXT NOT NULL,
-  $state TEXT NOT NULL
+  $state TEXT NOT NULL,
+  $companyName TEXT NOT NULL
   );
   ''';
 
@@ -39,6 +46,7 @@ class CustomerTable {
   static const String cnpj = 'cnpj';
   static const String city = 'city';
   static const String state = 'state';
+  static const String companyName = 'companyName';
 
   static Map<String, dynamic> tomap(CustomerModel customer) {
     final map = <String, dynamic>{};
@@ -49,6 +57,7 @@ class CustomerTable {
     map[CustomerTable.cnpj] = customer.cnpj;
     map[CustomerTable.city] = customer.city;
     map[CustomerTable.state] = customer.state.toString();
+    map[CustomerTable.companyName] = customer.companyName;
 
     return map;
   }
@@ -88,14 +97,15 @@ class CustomerController {
     for (final item in result) {
       list.add(CustomerModel(
         id: item[CustomerTable.id],
-        name: item[CustomerTable.name],
-        phone: item[CustomerTable.phone],
-        cnpj: item[CustomerTable.cnpj],
-        city: item[CustomerTable.city],
+         name: item[CustomerTable.name] ?? '',
+        phone: item[CustomerTable.phone] ?? '',
+        cnpj: item[CustomerTable.cnpj] ?? '',
+        city: item[CustomerTable.city] ?? '',
         state: States.values.firstWhere(
           (element) =>
               element.toString() == (item[CustomerTable.state] ?? States.sc),
         ),
+        companyName: item[CustomerTable.companyName] ?? '',
       ));
     }
 

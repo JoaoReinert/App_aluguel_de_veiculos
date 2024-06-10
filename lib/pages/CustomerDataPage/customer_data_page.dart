@@ -141,6 +141,33 @@ class CustomerDataPage extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
+                  Row(
+                    children: [
+                      const Icon(Icons.account_balance),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        'Company -',
+                        style: TextStyle(color: Colors.black, fontSize: 18),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Text(
+                          customer.companyName,
+                          style:
+                              const TextStyle(color: Colors.black, fontSize: 18),
+                              softWrap: true,
+                              
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   const Row(
                     children: [
                       Icon(Icons.work),
@@ -159,7 +186,7 @@ class CustomerDataPage extends StatelessWidget {
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ],

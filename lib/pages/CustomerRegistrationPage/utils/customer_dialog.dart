@@ -32,10 +32,15 @@ Future<void> showCustomerDialog(
             ),
             TextButton(
               onPressed: () async {
+                state.cnpjverified = false;
                 if (customerFormKey.currentState!.validate()) {
+                  await state.checkCnpj();
+                if (state.cnpjverified && !state.error) {
                   await state.insert();
                   Navigator.of(context).pop();
-                 
+                } else {
+                  customerFormKey.currentState!.validate();
+                }
                 }
               },
               child: const Text(

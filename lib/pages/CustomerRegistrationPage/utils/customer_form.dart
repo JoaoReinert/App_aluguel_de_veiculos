@@ -60,9 +60,15 @@ class CustomerForm extends StatelessWidget {
             keyboardType: TextInputType.number,
             style: const TextStyle(fontSize: 15, color: Colors.black),
             decoration: decorationForm('CNPJ'),
+            onChanged: (value) {
+              state.cnpjverified = false;
+            },
             validator: (value) {
               if (value != null && value.isEmpty) {
                 return 'Enter the customers cnpj';
+              }
+              if (state.cnpjverified && state.error) {
+                return 'Enter a valid cnpj';
               }
               return null;
             },

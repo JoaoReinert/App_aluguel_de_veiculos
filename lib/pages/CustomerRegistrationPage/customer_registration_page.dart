@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../../controllers/database.dart';
@@ -23,6 +26,9 @@ class FunctionsCustomer extends ChangeNotifier {
   final _controllerCity = TextEditingController();
   States? _selectItem;
   final _listCustomer = <CustomerModel>[];
+  String companyName = '';
+  bool error = false;
+  bool cnpjverified = false;
 
   /// Getter para o controlador de texto do campo nome
   TextEditingController get controllerName => _controllerName;
@@ -52,12 +58,12 @@ class FunctionsCustomer extends ChangeNotifier {
   /// Função assíncrona para inserir um novo cliente
   Future<void> insert() async {
     final customers = CustomerModel(
-      name: controllerName.text,
-      phone: controllerPhone.text,
-      cnpj: controllerCNPJ.text,
-      city: controllerCity.text,
-      state: selectItem,
-    );
+        name: controllerName.text,
+        phone: controllerPhone.text,
+        cnpj: controllerCNPJ.text,
+        city: controllerCity.text,
+        state: selectItem,
+        companyName: companyName);
 
     await controller.insert(customers);
     await load();
@@ -67,6 +73,7 @@ class FunctionsCustomer extends ChangeNotifier {
     controllerCNPJ.clear();
     controllerCity.clear();
     _selectItem = null;
+    companyName = '';
     notifyListeners();
   }
 
@@ -80,6 +87,22 @@ class FunctionsCustomer extends ChangeNotifier {
 
   void updateState(States newValue) {
     _selectItem = newValue;
+    notifyListeners();
+  }
+
+  Future<void> checkCnpj() async {
+    final cnpj = _controllerCNPJ.text;
+    var uri = Uri.https('brasilapi.com.br', '/api/cnpj/v1/$cnpj');
+    final response = await http.get(uri);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+      companyName = data['nome_fantasia'] ?? 'Company name not found';
+      error = false;
+    } else {
+      error = true;
+      companyName = '';
+    }
+    cnpjverified = true;
     notifyListeners();
   }
 }
@@ -103,6 +126,7 @@ class CustomerRegistrationPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CustomerButton(
+                    state: state,
                     onpressed: () {
                       showCustomerDialog(context, state);
                     },
