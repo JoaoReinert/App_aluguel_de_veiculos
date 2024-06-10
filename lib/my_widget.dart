@@ -31,7 +31,6 @@ class MyWidget extends StatelessWidget {
             },
           );
         }
-        // Adicione outras rotas aqui se necessário
         return MaterialPageRoute(builder: (context) => const HomePage());
       },
       routes: {
