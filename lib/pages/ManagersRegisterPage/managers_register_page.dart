@@ -1,46 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../enum_states.dart';
+import '../../models/managers_model.dart';
 import 'utils/manager_button.dart';
-import 'utils/manager_form.dart';
+import 'utils/manager_dialog.dart';
 
 ///provider referente ao estado dos gerentes
 class FunctionManager extends ChangeNotifier {
-  void alertDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return SingleChildScrollView(
-            child: AlertDialog(
-              shape: const BeveledRectangleBorder(),
-              backgroundColor: Colors.white,
-              title: const Text(
-                'Manager Registration',
-                style: TextStyle(color: Colors.blue),
-              ),
-              content: const ManagerForm(),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-  }
+  final _controllerName = TextEditingController();
+  final _controllerCPF = TextEditingController();
+  final _controllerState = TextEditingController();
+  final _controllerPhone = TextEditingController();
+  final _controllerComission = TextEditingController();
+  States? _selectItem;
+  final _listManager = <ManagerModel>[];
+
+  /// Getter para o controlador de texto do campo nome
+  TextEditingController get controllerName => _controllerName;
+
+  /// Getter para o controlador de texto do campo cpf
+  TextEditingController get controllerCPF => _controllerCPF;
+
+  /// Getter para o controlador de texto do campo estado
+  TextEditingController get controllerState => _controllerState;
+
+  /// Getter para o controlador de texto do campo telefone
+  TextEditingController get controllerPhone => _controllerPhone;
+
+  /// Getter para o controlador de texto do campo comissao
+  TextEditingController get controllerComission => _controllerComission;
+
+  ///Getter para o controlador de item selecionado (estado)
+  States? get selectItem => _selectItem;
+
+  /// Getter para a lista de modelos de cliente
+  List<ManagerModel> get listManager => _listManager;
 }
+
 ///criacao da tela de resgistro do gerente
 class ManagersRegisterPage extends StatelessWidget {
   ///instancia da classe
@@ -60,12 +57,54 @@ class ManagersRegisterPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ManagerButton(
+                    state: state,
                     onpressed: () {
-                      state.alertDialog(context);
+                      showCustomerDialog(context, state);
                     },
                   ),
                 ),
               ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                itemCount: state.listManager.length,
+                itemBuilder: (context, index) {
+                  final manager = state.listManager[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: Card(
+                      color: const Color.fromARGB(255, 203, 202, 202),
+                      elevation: 3,
+                      shadowColor: Colors.black,
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/managerDataPage',
+                              arguments: manager);
+                        },
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Colors.white, width: 1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        title: Text(
+                          manager.name,
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                        subtitle: Text('CPF: ${manager.cpf}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.delete),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           );
         },

@@ -14,6 +14,7 @@ Future<Database> getDatabase() async {
     path,
     onCreate: (db, version) {
       db.execute(CustomerTable.createTable);
+      //db.execute(CustomerTable.createTable);
     },
 
      onUpgrade: (db, oldVersion, newVersion) async {

@@ -42,6 +42,7 @@ class FunctionsCustomer extends ChangeNotifier {
   /// Getter para o controlador de texto do campo cidade
   TextEditingController get controllerCity => _controllerCity;
 
+  ///Getter para o controlador de item selecionado (estado)
   States? get selectItem => _selectItem;
 
   /// Getter para a lista de modelos de cliente

@@ -3,6 +3,7 @@ import 'models/customers_model.dart';
 import 'pages/CustomerDataPage/customer_data_page.dart';
 import 'pages/CustomerRegistrationPage/customer_registration_page.dart';
 import 'pages/HomePage/home_page.dart';
+import 'pages/ManagerDataPage/manager_data_page.dart';
 import 'pages/ManagersRegisterPage/managers_register_page.dart';
 import 'pages/RentsPage/rents_page.dart';
 import 'pages/VehicleRegistrationPage/vehicle_registration_page.dart';
@@ -31,7 +32,6 @@ class MyWidget extends StatelessWidget {
             },
           );
         }
-        return MaterialPageRoute(builder: (context) => const HomePage());
       },
       routes: {
         '/homePage': (context) => const HomePage(),
@@ -41,6 +41,7 @@ class MyWidget extends StatelessWidget {
         '/vehicleRegistrationPage': (context) =>
             const VehicleRegistrationPage(),
         '/rentsPage': (context) => const RentsPage(),
+        '/managerDataPage':(context) => const ManagerDataPage(),
       },
     );
   }
