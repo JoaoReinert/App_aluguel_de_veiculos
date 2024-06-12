@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../controllers/database.dart';
 import '../../enum_states.dart';
 import '../../models/managers_model.dart';
 import 'utils/manager_button.dart';
@@ -8,6 +9,13 @@ import 'utils/manager_dialog.dart';
 
 ///provider referente ao estado dos gerentes
 class FunctionManager extends ChangeNotifier {
+  ///instancia do provider para sempre que for chamado, ele chamar a funcao load
+  FunctionManager() {
+    load();
+  }
+  /// Controlador para operações relacionadas aos clientes
+  final controller = ManagerController();
+
   final _controllerName = TextEditingController();
   final _controllerCPF = TextEditingController();
   final _controllerState = TextEditingController();
@@ -36,6 +44,46 @@ class FunctionManager extends ChangeNotifier {
 
   /// Getter para a lista de modelos de cliente
   List<ManagerModel> get listManager => _listManager;
+
+  /// Função assíncrona para carregar os dados dos gerentes
+  Future<void> load() async {
+    final list = await controller.select();
+    _listManager.clear();
+    _listManager.addAll(list);
+    print('Lista de gerentes carregada: $_listManager');  
+    notifyListeners();
+  }
+  /// Função assíncrona para inserir um novo gerente
+  Future<void> insert() async {
+    final managers = ManagerModel(
+        name: controllerName.text,
+        cpf: controllerCPF.text,
+        state: selectItem,
+        phone: controllerPhone.text,
+        comission: controllerComission.text);
+
+    await controller.insert(managers);
+    await load();
+
+    controllerName.clear();
+    controllerCPF.clear();
+    _selectItem = null;
+    controllerPhone.clear();
+    controllerComission.clear();
+
+    notifyListeners();
+  }
+
+  Future<void> delete(ManagerModel manager) async {
+    await controller.delete(manager);
+    await load();
+    notifyListeners();
+  }
+
+  void updateState(States newValue) {
+    _selectItem = newValue;
+    notifyListeners();
+  }
 }
 
 ///criacao da tela de resgistro do gerente
@@ -59,7 +107,7 @@ class ManagersRegisterPage extends StatelessWidget {
                   child: ManagerButton(
                     state: state,
                     onpressed: () {
-                      showCustomerDialog(context, state);
+                      showManagerDialog(context, state);
                     },
                   ),
                 ),
@@ -95,7 +143,9 @@ class ManagersRegisterPage extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                state.delete(manager);
+                              },
                               icon: const Icon(Icons.delete),
                             ),
                           ],

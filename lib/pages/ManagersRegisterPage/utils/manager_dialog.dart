@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
 import '../managers_register_page.dart';
 import 'manager_form.dart';
 
-Future <void> showCustomerDialog(BuildContext context, FunctionManager state) async {
+Future<void> showManagerDialog(
+    BuildContext context, FunctionManager state) async {
   final managerFormKey = GlobalKey<FormState>();
   showDialog(
       context: context,
@@ -17,7 +17,8 @@ Future <void> showCustomerDialog(BuildContext context, FunctionManager state) as
               style: TextStyle(color: Colors.blue),
             ),
             content: ManagerForm(
-              key: managerFormKey,
+              state: state,
+              managerFormKey: managerFormKey,
             ),
             actions: [
               TextButton(
@@ -30,7 +31,14 @@ Future <void> showCustomerDialog(BuildContext context, FunctionManager state) as
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () async {
+                  if (managerFormKey.currentState!.validate()) {
+                    await state.insert();
+                    Navigator.of(context).pop();
+                  } else {
+                    managerFormKey.currentState!.validate();
+                  }
+                },
                 child: const Text(
                   'Save',
                   style: TextStyle(color: Colors.blue),

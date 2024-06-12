@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import '../../../enum_states.dart';
 import '../../../theme.dart';
+import '../managers_register_page.dart';
+
 ///formulario referente ao cadastro de gerentes
-class ManagerForm extends StatefulWidget {
+class ManagerForm extends StatelessWidget {
   ///instancia da classe
-  const ManagerForm({super.key});
+  const ManagerForm(
+      {super.key, required this.state, required this.managerFormKey});
 
-  @override
-  State<ManagerForm> createState() => _ManagerFormState();
-}
+  final FunctionManager state;
 
-class _ManagerFormState extends State<ManagerForm> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> managerFormKey;
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: managerFormKey,
       child: Column(
         children: [
           TextFormField(
+            controller: state.controllerName,
             keyboardType: TextInputType.name,
             textCapitalization: TextCapitalization.words,
             style: const TextStyle(fontSize: 15, color: Colors.black),
@@ -35,6 +36,7 @@ class _ManagerFormState extends State<ManagerForm> {
             height: 10,
           ),
           TextFormField(
+            controller: state.controllerCPF,
             keyboardType: TextInputType.number,
             style: const TextStyle(fontSize: 15, color: Colors.black),
             decoration: decorationForm('CPF'),
@@ -49,15 +51,17 @@ class _ManagerFormState extends State<ManagerForm> {
             height: 10,
           ),
           DropdownButtonFormField<States>(
-            // value: state.controllerStates,
+            value: state.selectItem,
             onChanged: (value) {
-              if (value != null) {}
+              if (value != null) {
+                state.updateState(value);
+              }
             },
             items: States.values.map(
               (state) {
                 return DropdownMenuItem(
                   value: state,
-                  child: Text(state.toString().split('.').last),
+                  child: Text(state.toString().split('.').last.toUpperCase()),
                 );
               },
             ).toList(),
@@ -70,6 +74,7 @@ class _ManagerFormState extends State<ManagerForm> {
             height: 10,
           ),
           TextFormField(
+            controller: state.controllerPhone,
             keyboardType: TextInputType.phone,
             style: const TextStyle(fontSize: 15, color: Colors.black),
             decoration: decorationForm('Phone'),
@@ -84,6 +89,7 @@ class _ManagerFormState extends State<ManagerForm> {
             height: 10,
           ),
           TextFormField(
+            controller: state.controllerComission,
             keyboardType: TextInputType.number,
             style: const TextStyle(fontSize: 15, color: Colors.black),
             decoration: decorationForm('Comission'),

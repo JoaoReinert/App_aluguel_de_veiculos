@@ -1,7 +1,7 @@
 ///classe modelo dos veiculos
 class VehiclesModel {
   ///id para identificar no banco qual é o carro
-  final String? id;
+  late int? id;
   ///marca do veiculo
   final String brand;
   ///modelo do veiculo

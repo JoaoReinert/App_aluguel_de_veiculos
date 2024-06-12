@@ -1,18 +1,20 @@
+import '../enum_states.dart';
+
 ///classe modelo dos gerentes
 class ManagerModel {
 
   ///id para identificar qual o gerente do banco
-  final String? id;
+  late int? id;
   ///nome do gerente
   final String name;
   ///cpf do gerente
-  final int cpf;
+  final String cpf;
   ///estado do gerente
-  final String state;
+  final States? state;
   ///telefone do gerente
   final String phone;
   ///comissao do gerente
-  final double comission;
+  final String comission;
 
   ///instacia do modelo para ser obrigatorio a passagem de dados
   ManagerModel(

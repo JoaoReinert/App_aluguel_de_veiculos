@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../enum_states.dart';
 import '../models/customers_model.dart';
+import '../models/managers_model.dart';
 
 ///iniciando o banco de dados
 Future<Database> getDatabase() async {
@@ -14,15 +15,18 @@ Future<Database> getDatabase() async {
     path,
     onCreate: (db, version) {
       db.execute(CustomerTable.createTable);
-      //db.execute(CustomerTable.createTable);
+      db.execute(ManagerTable.createTable);
     },
-
-     onUpgrade: (db, oldVersion, newVersion) async {
+    onUpgrade: (db, oldVersion, newVersion) async {
       if (oldVersion < 2) {
-        await db.execute('ALTER TABLE ${CustomerTable.tableName} ADD COLUMN ${CustomerTable.companyName} TEXT NOT NULL DEFAULT ""');
+        await db.execute(
+            'ALTER TABLE ${CustomerTable.tableName} ADD COLUMN ${CustomerTable.companyName} TEXT NOT NULL DEFAULT ""');
+      }
+      if (oldVersion < 3) {
+        await db.execute(ManagerTable.createTable);
       }
     },
-    version: 2,
+    version: 3,
   );
 }
 
@@ -98,18 +102,96 @@ class CustomerController {
     for (final item in result) {
       list.add(CustomerModel(
         id: item[CustomerTable.id],
-         name: item[CustomerTable.name] ?? '',
+        name: item[CustomerTable.name] ?? '',
         phone: item[CustomerTable.phone] ?? '',
         cnpj: item[CustomerTable.cnpj] ?? '',
         city: item[CustomerTable.city] ?? '',
         state: States.values.firstWhere(
-          (element) =>
-              element.toString() == (item[CustomerTable.state] ?? States.sc),
+          orElse: () => States.sc,
+          (element) => element.toString() == (item[CustomerTable.state]),
         ),
         companyName: item[CustomerTable.companyName] ?? '',
       ));
     }
 
+    return list;
+  }
+}
+
+class ManagerTable {
+  static const String createTable = '''
+   CREATE TABLE $tableName (
+  $id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  $name TEXT NOT NULL,
+  $cpf TEXT NOT NULL,
+  $state TEXT NOT NULL,
+  $phone TEXT NOT NULL,
+  $comission TEXT NOT NULL
+  );
+  ''';
+
+  static const String tableName = 'manager';
+
+  static const String id = 'id';
+  static const String name = 'name';
+  static const String cpf = 'cpf';
+  static const String state = 'state';
+  static const String phone = 'phone';
+  static const String comission = 'comission';
+
+  static Map<String, dynamic> toMap(ManagerModel manager) {
+    final map = <String, dynamic>{};
+
+    map[ManagerTable.id] = manager.id;
+    map[ManagerTable.name] = manager.name;
+    map[ManagerTable.cpf] = manager.cpf;
+    map[ManagerTable.state] = manager.state.toString();
+    map[ManagerTable.phone] = manager.phone;
+    map[ManagerTable.comission] = manager.comission;
+
+    return map;
+  }
+}
+
+class ManagerController {
+  Future<void> insert(ManagerModel manager) async {
+    final database = await getDatabase();
+    final map = ManagerTable.toMap(manager);
+    print('inserindo gerente------------ $map');
+    await database.insert(ManagerTable.tableName, map);
+
+    return;
+  }
+
+  Future<void> delete(ManagerModel manager) async {
+    final database = await getDatabase();
+
+    database.delete(ManagerTable.tableName,
+        where: '${ManagerTable.id} = ?', whereArgs: [manager.id]);
+  }
+
+  Future<List<ManagerModel>> select() async {
+    final database = await getDatabase();
+
+    final List<Map<String, dynamic>> result = await database.query(
+      ManagerTable.tableName,
+    );
+
+    var list = <ManagerModel>[];
+
+    for (final item in result) {
+      list.add(ManagerModel(
+        id: item[ManagerTable.id],
+        name: item[ManagerTable.name] ?? '',
+        cpf: item[ManagerTable.cpf] ?? '',
+        state: States.values.firstWhere(
+          orElse: () => States.sc,
+          (element) => element.toString() == (item[ManagerTable.state]),
+        ),
+        phone: item[ManagerTable.phone] ?? '',
+        comission: item[ManagerTable.comission] ?? '',
+      ));
+    }
     return list;
   }
 }
