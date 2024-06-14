@@ -50,7 +50,6 @@ class FunctionManager extends ChangeNotifier {
     final list = await controller.select();
     _listManager.clear();
     _listManager.addAll(list);
-    print('Lista de gerentes carregada: $_listManager');  
     notifyListeners();
   }
   /// Função assíncrona para inserir um novo gerente
@@ -73,13 +72,13 @@ class FunctionManager extends ChangeNotifier {
 
     notifyListeners();
   }
-
+  ///funcao de delete para deletar o gerente do banco de dados
   Future<void> delete(ManagerModel manager) async {
     await controller.delete(manager);
     await load();
     notifyListeners();
   }
-
+  ///funcao de update para controlar qual estado foi colocado
   void updateState(States newValue) {
     _selectItem = newValue;
     notifyListeners();

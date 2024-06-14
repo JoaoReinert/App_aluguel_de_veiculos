@@ -8,9 +8,9 @@ class ManagerForm extends StatelessWidget {
   ///instancia da classe
   const ManagerForm(
       {super.key, required this.state, required this.managerFormKey});
-
+  ///provider
   final FunctionManager state;
-
+  ///key do formulario para validacao
   final GlobalKey<FormState> managerFormKey;
 
   @override

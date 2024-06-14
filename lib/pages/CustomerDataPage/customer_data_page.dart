@@ -6,7 +6,7 @@ import '../../models/customers_model.dart';
 class CustomerDataPage extends StatelessWidget {
   ///instancia da pagina
   const CustomerDataPage({super.key, required this.customer});
-
+  ///puxando o modelo de cliente que sera exibido nessa pagina
   final CustomerModel customer;
 
   @override

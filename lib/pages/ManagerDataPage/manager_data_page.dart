@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../models/managers_model.dart';
-
+///criacao da pagina de dados do gerente
 class ManagerDataPage extends StatelessWidget {
-
+  ///instancia da pagina
   const ManagerDataPage({super.key, required this.manager});
-
+  ///puxando o modelo de gerente que sera exibido nessa pagina
   final ManagerModel manager;
 
   @override

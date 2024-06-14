@@ -26,8 +26,13 @@ class FunctionsCustomer extends ChangeNotifier {
   final _controllerCity = TextEditingController();
   States? _selectItem;
   final _listCustomer = <CustomerModel>[];
+  ///variavel para o nome da empresa do cliente
   String companyName = '';
+  ///boleano para tratar erro, false se cnpj nao foi valido
+  ///e true para valido
   bool error = false;
+  ///boleana para verificar se o cnpj ja foi verificado
+  ///ou nao
   bool cnpjverified = false;
 
   /// Getter para o controlador de texto do campo nome
@@ -85,12 +90,12 @@ class FunctionsCustomer extends ChangeNotifier {
 
     notifyListeners();
   }
-
+  ///funcao de update para controlar qual estado foi colocado
   void updateState(States newValue) {
     _selectItem = newValue;
     notifyListeners();
   }
-
+  ///funcao para checar o cnpj do cliente por meio da api
   Future<void> checkCnpj() async {
     final cnpj = _controllerCNPJ.text;
     var uri = Uri.https('brasilapi.com.br', '/api/cnpj/v1/$cnpj');

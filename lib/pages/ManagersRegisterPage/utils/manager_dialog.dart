@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../managers_register_page.dart';
 import 'manager_form.dart';
-
+///funcao para abrir um dialog responsavel pelo
+///cadastro de gerentes
 Future<void> showManagerDialog(
     BuildContext context, FunctionManager state) async {
   final managerFormKey = GlobalKey<FormState>();
