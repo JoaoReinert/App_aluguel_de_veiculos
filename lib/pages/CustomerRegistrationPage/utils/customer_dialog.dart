@@ -37,6 +37,7 @@ Future<void> showCustomerDialog(
                   await state.checkCnpj();
                   if (state.cnpjverified && !state.error) {
                     await state.insert();
+                    if (!context.mounted) return;
                     Navigator.of(context).pop();
                   } else {
                     customerFormKey.currentState!.validate();

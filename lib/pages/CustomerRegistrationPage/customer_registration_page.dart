@@ -7,8 +7,10 @@ import 'package:provider/provider.dart';
 import '../../controllers/database.dart';
 import '../../enum_states.dart';
 import '../../models/customers_model.dart';
+import '../ManagersRegisterPage/utils/standard_dialog.dart';
 import 'utils/customer_button.dart';
 import 'utils/customer_dialog.dart';
+import 'utils/delete_dialog_customer.dart';
 
 ///provider referente ao estado dos clientes
 class FunctionsCustomer extends ChangeNotifier {
@@ -17,6 +19,7 @@ class FunctionsCustomer extends ChangeNotifier {
     load();
   }
 
+  final customerKey = GlobalKey<FormState>();
   /// Controlador para operações relacionadas aos clientes
   final controller = CustomerController();
 
@@ -26,11 +29,14 @@ class FunctionsCustomer extends ChangeNotifier {
   final _controllerCity = TextEditingController();
   States? _selectItem;
   final _listCustomer = <CustomerModel>[];
+
   ///variavel para o nome da empresa do cliente
   String companyName = '';
+
   ///boleano para tratar erro, false se cnpj nao foi valido
   ///e true para valido
   bool error = false;
+
   ///boleana para verificar se o cnpj ja foi verificado
   ///ou nao
   bool cnpjverified = false;
@@ -90,11 +96,13 @@ class FunctionsCustomer extends ChangeNotifier {
 
     notifyListeners();
   }
+
   ///funcao de update para controlar qual estado foi colocado
   void updateState(States newValue) {
     _selectItem = newValue;
     notifyListeners();
   }
+
   ///funcao para checar o cnpj do cliente por meio da api
   Future<void> checkCnpj() async {
     final cnpj = _controllerCNPJ.text;
@@ -133,8 +141,19 @@ class CustomerRegistrationPage extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: CustomerButton(
                     state: state,
-                    onpressed: () {
-                      showCustomerDialog(context, state);
+                    onpressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return DialogDefault(
+                              key: state.customerKey,
+                              title: 'Customer Registration',
+                              items: [
+
+                              ]
+
+                          );},
+                      );
                     },
                   ),
                 ),
@@ -171,7 +190,16 @@ class CustomerRegistrationPage extends StatelessWidget {
                           children: [
                             IconButton(
                               onPressed: () {
-                                state.delete(customer);
+                                showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      Delete_dialog(
+                                        nameCustomer: customer.name,
+                                        function: () async {
+                                          await state.delete(customer);
+                                        },
+                                      ),
+                                );
                               },
                               icon: const Icon(Icons.delete),
                             ),

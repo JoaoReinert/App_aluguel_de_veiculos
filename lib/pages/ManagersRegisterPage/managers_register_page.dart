@@ -1,18 +1,24 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/database.dart';
 import '../../enum_states.dart';
 import '../../models/managers_model.dart';
+import '../../theme.dart';
+import 'utils/delete_dialog_manager.dart';
 import 'utils/manager_button.dart';
-import 'utils/manager_dialog.dart';
+import 'utils/standard_dialog.dart';
 
 ///provider referente ao estado dos gerentes
 class FunctionManager extends ChangeNotifier {
+
+  final managerKey = GlobalKey<FormState>();
   ///instancia do provider para sempre que for chamado, ele chamar a funcao load
   FunctionManager() {
     load();
   }
+
   /// Controlador para operações relacionadas aos clientes
   final controller = ManagerController();
 
@@ -52,6 +58,7 @@ class FunctionManager extends ChangeNotifier {
     _listManager.addAll(list);
     notifyListeners();
   }
+
   /// Função assíncrona para inserir um novo gerente
   Future<void> insert() async {
     final managers = ManagerModel(
@@ -72,12 +79,14 @@ class FunctionManager extends ChangeNotifier {
 
     notifyListeners();
   }
+
   ///funcao de delete para deletar o gerente do banco de dados
   Future<void> delete(ManagerModel manager) async {
     await controller.delete(manager);
     await load();
     notifyListeners();
   }
+
   ///funcao de update para controlar qual estado foi colocado
   void updateState(States newValue) {
     _selectItem = newValue;
@@ -89,6 +98,8 @@ class FunctionManager extends ChangeNotifier {
 class ManagersRegisterPage extends StatelessWidget {
   ///instancia da classe
   const ManagersRegisterPage({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +116,125 @@ class ManagersRegisterPage extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: ManagerButton(
                     state: state,
-                    onpressed: () {
-                      showManagerDialog(context, state);
+                    onpressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return DialogDefault(
+                            key: state.managerKey,
+                            title: 'Manager registration',
+                            actions: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    if (state.managerKey.currentState!.validate()) {
+                                      await state.insert();
+                                      if (!context.mounted) return;
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Save',
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+
+                            items: [
+                                 TextFormField(
+                                  controller: state.controllerName,
+                                  keyboardType: TextInputType.name,
+                                  textCapitalization: TextCapitalization.words,
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Colors.black),
+                                  decoration: decorationForm('Name'),
+                                  validator: (value) {
+                                    if (value != null && value.isEmpty) {
+                                      return 'Enter the manager name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+
+                              TextFormField(
+                                controller: state.controllerCPF,
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                decoration: decorationForm('CPF'),
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return 'Enter the manager CPF';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              DropdownButtonFormField<States>(
+                                value: state.selectItem,
+                                onChanged: (value) {
+                                  // state.onChangedStates!(value);
+                                },
+                                items: States.values.map(
+                                  (state) {
+                                    return DropdownMenuItem(
+                                      value: state,
+                                      child: Text(state
+                                          .toString()
+                                          .split('.')
+                                          .last
+                                          .toUpperCase()),
+                                    );
+                                  },
+                                ).toList(),
+                                decoration: decorationForm('States'),
+                                dropdownColor: Colors.white,
+                                style: const TextStyle(
+                                    color: Colors.black, fontSize: 20),
+                                iconEnabledColor: Colors.blue,
+                              ),
+                              TextFormField(
+                                controller: state.controllerPhone,
+                                keyboardType: TextInputType.phone,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                decoration: decorationForm('Phone'),
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return 'Enter the manager telephone number';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: state.controllerComission,
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                decoration: decorationForm('Comission'),
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return 'Enter the manager comission';
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                            ],
+                          );
+                        },
+                      );
                     },
                   ),
                 ),
@@ -143,7 +271,15 @@ class ManagersRegisterPage extends StatelessWidget {
                           children: [
                             IconButton(
                               onPressed: () {
-                                state.delete(manager);
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Delete_dialog_manager(
+                                    nameManager: manager.name,
+                                    function: () async {
+                                      await state.delete(manager);
+                                    },
+                                  ),
+                                );
                               },
                               icon: const Icon(Icons.delete),
                             ),

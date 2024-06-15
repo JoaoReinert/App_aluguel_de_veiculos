@@ -9,12 +9,15 @@ import '../VehicleRegistrationPage/vehicle_registration_page.dart';
 class HomeState extends ChangeNotifier {
   ///variavel referente a pagina atual
   int currentPage = 0;
+
   ///controle para o slider
   late PageController pc;
+
   ///inicializando o controlador
   HomeState() {
     pc = PageController(initialPage: currentPage);
   }
+
   ///funcao para quando o usuario clicar no icon da pagina desejada
   ///o icon mudar de cor
   void setCurrentPage(int page) {
@@ -31,6 +34,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(
+      'Theme.of(context).bottomNavigationBarTheme.backgroundColor: ${Theme.of(context).bottomNavigationBarTheme.backgroundColor}',
+    );
+
     return ChangeNotifierProvider(
       create: (_) => HomeState(),
       child: Consumer<HomeState>(
@@ -47,20 +54,21 @@ class HomePage extends StatelessWidget {
               ],
             ),
             bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               currentIndex: state.currentPage,
               items: const [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'Customers',
-                    ),
-                BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Managers'),
+                  icon: Icon(Icons.person),
+                  label: 'Customers',
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.work), label: 'Managers'),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.directions_car), label: 'Vehicles'),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.contact_page), label: 'Rents'),
               ],
               onTap: (page) {
-
                 state.setCurrentPage(page);
               },
             ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 ThemeData theme(BuildContext context) {
-  return Theme.of(context).copyWith(
+  final theme = Theme.of(context);
+  return theme.copyWith(
     scaffoldBackgroundColor: Colors.white,
     textTheme: Typography.whiteCupertino,
     appBarTheme: const AppBarTheme(
@@ -12,11 +13,13 @@ ThemeData theme(BuildContext context) {
         color: Colors.white,
       ),
     ),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Colors.red,
+    bottomNavigationBarTheme: theme.bottomNavigationBarTheme.copyWith(
+      backgroundColor: Colors.grey,
       selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.grey,
-      unselectedLabelStyle: TextStyle(color: Colors.grey)
+      unselectedItemColor: Colors.white,
+      unselectedLabelStyle: TextStyle(
+        color: Colors.grey,
+      ),
     ),
   );
 }

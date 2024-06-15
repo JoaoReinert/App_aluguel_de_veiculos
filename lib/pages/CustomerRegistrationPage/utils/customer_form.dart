@@ -55,42 +55,8 @@ class CustomerForm extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          TextFormField(
-            controller: state.controllerCNPJ,
-            keyboardType: TextInputType.number,
-            style: const TextStyle(fontSize: 15, color: Colors.black),
-            decoration: decorationForm('CNPJ'),
-            onChanged: (value) {
-              state.cnpjverified = false;
-            },
-            validator: (value) {
-              if (value != null && value.isEmpty) {
-                return 'Enter the customers cnpj';
-              }
-              if (state.cnpjverified && state.error) {
-                return 'Enter a valid cnpj';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextFormField(
-            controller: state.controllerCity,
-            textCapitalization: TextCapitalization.words,
-            style: const TextStyle(fontSize: 15, color: Colors.black),
-            decoration: decorationForm('City'),
-            validator: (value) {
-              if (value != null && value.isEmpty) {
-                return 'Enter the customers city';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+
+
           DropdownButtonFormField<States>(
             validator: (value) {
               if (value == null) {
