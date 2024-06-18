@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '../managers_register_page.dart';
+import '../pages/ManagersRegisterPage/managers_register_page.dart';
+
 ///criacao da estilizacao do botao de cadastro para as telas
-class ManagerButton extends StatelessWidget {
-   ///instancia para passar a funcao do botao
-   const ManagerButton({
+class StandardFormButton extends StatelessWidget {
+  ///instancia para passar a funcao do botao
+  const StandardFormButton({
     required this.onpressed,
-     required FunctionManager state,
     super.key,
+    required this.icon,
+    required this.label,
   });
-///funcao para na tela poder passar uma funcao quando ele ser precionado
+
+  ///funcao para na tela poder passar uma funcao quando ele ser precionado
   final void Function() onpressed;
+
+  final Icon icon;
+
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +28,9 @@ class ManagerButton extends StatelessWidget {
         backgroundColor: Colors.white,
       ),
       onPressed: onpressed,
-      icon: const Icon(Icons.work, color: Colors.blue,),
-      label: const Text(
-        'Manager Registration',
+      icon: icon,
+      label: Text(
+        label,
         style: TextStyle(color: Colors.blue),
       ),
     );

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'utils/vehicleButton.dart';
+import '../../utils/standard_form_button.dart';
+
+class VehicleState extends ChangeNotifier {
+
+}
 ///criacao da tela de resgistro do veiculo
 class VehicleRegistrationPage extends StatelessWidget {
   ///instancia da classe
@@ -11,13 +15,21 @@ class VehicleRegistrationPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vehicles'),
-       actions: const [
-           Padding(
+        actions: [
+          Padding(
             padding: EdgeInsets.all(8.0),
-            child: VehicleButton(),
+            child: StandardFormButton(
+              onpressed: () {},
+              icon: const Icon(
+                Icons.directions_car,
+                color: Colors.blue,
+              ),
+              label: 'Registration +',
+            ),
           ),
-       ],
+        ],
       ),
+      
     );
   }
 }

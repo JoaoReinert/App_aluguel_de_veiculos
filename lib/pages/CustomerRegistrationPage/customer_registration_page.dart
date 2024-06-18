@@ -7,19 +7,22 @@ import 'package:provider/provider.dart';
 import '../../controllers/database.dart';
 import '../../enum_states.dart';
 import '../../models/customers_model.dart';
-import '../ManagersRegisterPage/utils/standard_dialog.dart';
-import 'utils/customer_button.dart';
-import 'utils/customer_dialog.dart';
-import 'utils/delete_dialog_customer.dart';
+import '../../theme.dart';
+import '../../utils/standard_delete_dialog.dart';
+import '../../utils/standard_dialog.dart';
+import '../../utils/standard_form_button.dart';
 
 ///provider referente ao estado dos clientes
 class FunctionsCustomer extends ChangeNotifier {
+  /// criando a variavel da chave do meu formulario para
+  /// validacao do mesmo
+  final customerKey = GlobalKey<FormState>();
+
   ///instancia do provider para sempre que for chamado, ele chamar a funcao load
   FunctionsCustomer() {
     load();
   }
 
-  final customerKey = GlobalKey<FormState>();
   /// Controlador para operações relacionadas aos clientes
   final controller = CustomerController();
 
@@ -139,20 +142,146 @@ class CustomerRegistrationPage extends StatelessWidget {
               actions: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: CustomerButton(
-                    state: state,
+                  child: StandardFormButton(
+                    icon: const Icon(
+                      Icons.person,
+                      color: Colors.blue,
+                    ),
+                    label: 'Registration +',
                     onpressed: () async {
                       await showDialog(
                         context: context,
                         builder: (context) {
-                          return DialogDefault(
-                              key: state.customerKey,
-                              title: 'Customer Registration',
-                              items: [
-
-                              ]
-
-                          );},
+                          return StandardDialog(
+                            formKey: state.customerKey,
+                            title: 'Customer Registration',
+                            actions: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    state.cnpjverified = false;
+                                    state.error = false;
+                                    if (state.customerKey.currentState!
+                                        .validate()) {
+                                      await state.checkCnpj();
+                                      if (state.cnpjverified && !state.error) {
+                                        await state.insert();
+                                        if (!context.mounted) return;
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        state.customerKey.currentState!
+                                            .validate();
+                                      }
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Save',
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            items: [
+                              TextFormField(
+                                controller: state.controllerName,
+                                keyboardType: TextInputType.name,
+                                textCapitalization: TextCapitalization.words,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                decoration: decorationForm('Name'),
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return 'Enter the customer name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: state.controllerCNPJ,
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                decoration: decorationForm('CNPJ'),
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return 'Enter the customer CNPJ';
+                                  }
+                                  if (state.error) {
+                                    return 'Invalid CNPJ';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                controller: state.controllerPhone,
+                                keyboardType: TextInputType.phone,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                decoration: decorationForm('Phone'),
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return 'Enter the telephone number';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              DropdownButtonFormField<States>(
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Enter the customers state';
+                                  }
+                                  return null;
+                                },
+                                value: state.selectItem,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    state.updateState(value);
+                                  }
+                                },
+                                items: States.values.map(
+                                  (state) {
+                                    return DropdownMenuItem(
+                                      value: state,
+                                      child: Text(state
+                                          .toString()
+                                          .split('.')
+                                          .last
+                                          .toUpperCase()),
+                                    );
+                                  },
+                                ).toList(),
+                                decoration: decorationForm('States'),
+                                dropdownColor: Colors.white,
+                                style: const TextStyle(
+                                    color: Colors.black, fontSize: 20),
+                                iconEnabledColor: Colors.blue,
+                              ),
+                              TextFormField(
+                                controller: state.controllerCity,
+                                textCapitalization: TextCapitalization.words,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                decoration: decorationForm('City'),
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return 'Enter the customer City';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
                   ),
@@ -161,53 +290,68 @@ class CustomerRegistrationPage extends StatelessWidget {
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                itemCount: state.listCustomer.length,
-                itemBuilder: (context, index) {
-                  final customer = state.listCustomer[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: Card(
-                      color: const Color.fromARGB(255, 203, 202, 202),
-                      elevation: 3,
-                      shadowColor: Colors.black,
-                      child: ListTile(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/customerDataPage',
-                              arguments: customer);
-                        },
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Colors.white, width: 1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        title: Text(
-                          customer.name,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        subtitle: Text('CNPJ: ${customer.cnpj}'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      Delete_dialog(
-                                        nameCustomer: customer.name,
-                                        function: () async {
-                                          await state.delete(customer);
-                                        },
-                                      ),
-                                );
-                              },
-                              icon: const Icon(Icons.delete),
-                            ),
-                          ],
-                        ),
+              child: Builder(
+                builder: (context) {
+                  if (state.listCustomer.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No customers registered.',
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemCount: state.listCustomer.length,
+                      itemBuilder: (context, index) {
+                        final customer = state.listCustomer[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: Card(
+                            color: const Color.fromARGB(255, 203, 202, 202),
+                            elevation: 3,
+                            shadowColor: Colors.black,
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, '/customerDataPage',
+                                    arguments: customer);
+                              },
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    color: Colors.white, width: 1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              title: Text(
+                                customer.name,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                              subtitle: Text('CNPJ: ${customer.cnpj}'),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            StandardDeleteDialog(
+                                          name: customer.name,
+                                          function: () async {
+                                            await state.delete(customer);
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ),

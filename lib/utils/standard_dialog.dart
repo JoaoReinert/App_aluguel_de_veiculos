@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../../enum_states.dart';
-import '../../../theme.dart';
-import '../managers_register_page.dart';
 
-class DialogDefault extends StatelessWidget {
+class StandardDialog extends StatelessWidget {
   ///instancia da classe
-  const DialogDefault({
+  const StandardDialog({
     required this.title,
     this.actions,
     required this.items,
-    required this.key
+    required this.formKey
   });
 
   final String title;
   final Widget? actions;
   final List<Widget> items;
-  final GlobalKey<FormState> key;
+  final GlobalKey<FormState> formKey;
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +25,16 @@ class DialogDefault extends StatelessWidget {
       ),
       content: SingleChildScrollView(
         child: Form(
-          key: key,
+          key: formKey,
           child: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                for (final item in items) item,
+                for (int i = 0; i < items.length; i++)... [
+                  items[i],
+                  if (i < items.length -1) const SizedBox(height: 16,),
+                ],
                 if (actions != null) actions ?? const SizedBox.shrink(),
               ],
             ),

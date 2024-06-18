@@ -6,14 +6,14 @@ import '../../controllers/database.dart';
 import '../../enum_states.dart';
 import '../../models/managers_model.dart';
 import '../../theme.dart';
-import 'utils/delete_dialog_manager.dart';
-import 'utils/manager_button.dart';
-import 'utils/standard_dialog.dart';
+import '../../utils/standard_delete_dialog.dart';
+import '../../utils/standard_form_button.dart';
+import '../../utils/standard_dialog.dart';
 
 ///provider referente ao estado dos gerentes
 class FunctionManager extends ChangeNotifier {
-
   final managerKey = GlobalKey<FormState>();
+
   ///instancia do provider para sempre que for chamado, ele chamar a funcao load
   FunctionManager() {
     load();
@@ -99,8 +99,6 @@ class ManagersRegisterPage extends StatelessWidget {
   ///instancia da classe
   const ManagersRegisterPage({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -114,14 +112,15 @@ class ManagersRegisterPage extends StatelessWidget {
               actions: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ManagerButton(
-                    state: state,
+                  child: StandardFormButton(
+                    icon: const Icon(Icons.work, color: Colors.blue,),
+                    label: 'Registration +',
                     onpressed: () async {
                       await showDialog(
                         context: context,
                         builder: (context) {
-                          return DialogDefault(
-                            key: state.managerKey,
+                          return StandardDialog(
+                            formKey: state.managerKey,
                             title: 'Manager registration',
                             actions: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -137,7 +136,8 @@ class ManagersRegisterPage extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                    if (state.managerKey.currentState!.validate()) {
+                                    if (state.managerKey.currentState!
+                                        .validate()) {
                                       await state.insert();
                                       if (!context.mounted) return;
                                       Navigator.of(context).pop();
@@ -148,26 +148,23 @@ class ManagersRegisterPage extends StatelessWidget {
                                     style: TextStyle(color: Colors.blue),
                                   ),
                                 ),
-
                               ],
                             ),
-
                             items: [
-                                 TextFormField(
-                                  controller: state.controllerName,
-                                  keyboardType: TextInputType.name,
-                                  textCapitalization: TextCapitalization.words,
-                                  style: const TextStyle(
-                                      fontSize: 15, color: Colors.black),
-                                  decoration: decorationForm('Name'),
-                                  validator: (value) {
-                                    if (value != null && value.isEmpty) {
-                                      return 'Enter the manager name';
-                                    }
-                                    return null;
-                                  },
-                                ),
-
+                              TextFormField(
+                                controller: state.controllerName,
+                                keyboardType: TextInputType.name,
+                                textCapitalization: TextCapitalization.words,
+                                style: const TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                                decoration: decorationForm('Name'),
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return 'Enter the manager name';
+                                  }
+                                  return null;
+                                },
+                              ),
                               TextFormField(
                                 controller: state.controllerCPF,
                                 keyboardType: TextInputType.number,
@@ -230,7 +227,6 @@ class ManagersRegisterPage extends StatelessWidget {
                                   return null;
                                 },
                               ),
-
                             ],
                           );
                         },
@@ -242,54 +238,66 @@ class ManagersRegisterPage extends StatelessWidget {
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                itemCount: state.listManager.length,
-                itemBuilder: (context, index) {
-                  final manager = state.listManager[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: Card(
-                      color: const Color.fromARGB(255, 203, 202, 202),
-                      elevation: 3,
-                      shadowColor: Colors.black,
-                      child: ListTile(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/managerDataPage',
-                              arguments: manager);
-                        },
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Colors.white, width: 1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        title: Text(
-                          manager.name,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        subtitle: Text('CPF: ${manager.cpf}'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => Delete_dialog_manager(
-                                    nameManager: manager.name,
-                                    function: () async {
-                                      await state.delete(manager);
-                                    },
-                                  ),
-                                );
+              child: Builder(
+                builder: (context) {
+                  if (state.listManager.isEmpty) {
+                    return const Center(
+                      child: Text('No managers registered',
+                        style: TextStyle(fontSize: 18, color: Colors.grey),),
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemCount: state.listManager.length,
+                      itemBuilder: (context, index) {
+                        final manager = state.listManager[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: Card(
+                            color: const Color.fromARGB(255, 203, 202, 202),
+                            elevation: 3,
+                            shadowColor: Colors.black,
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/managerDataPage',
+                                    arguments: manager);
                               },
-                              icon: const Icon(Icons.delete),
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    color: Colors.white, width: 1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              title: Text(
+                                manager.name,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                              subtitle: Text('CPF: ${manager.cpf}'),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            StandardDeleteDialog(
+                                              name: manager.name,
+                                              function: () async {
+                                                await state.delete(manager);
+                                              },
+                                            ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },),
             ),
           );
         },
