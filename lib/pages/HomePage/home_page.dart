@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../CustomerRegistrationPage/customer_registration_page.dart';
 import '../ManagersRegisterPage/managers_register_page.dart';
 import '../RentsPage/rents_page.dart';
-import '../VehicleRegistrationPage/vehicle_registration_page.dart';
+import '../VehicleListPage/vehicle_list_page.dart';
 
 ///criacao do provider da home page para passar as funcoes de navegacao
 class HomeState extends ChangeNotifier {
@@ -35,7 +35,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(
-      'Theme.of(context).bottomNavigationBarTheme.backgroundColor: ${Theme.of(context).bottomNavigationBarTheme.backgroundColor}',
+      'Theme.of(context).bottomNavigationBarTheme.backgroundColor: '
+          '${Theme.of(context).bottomNavigationBarTheme.backgroundColor}',
     );
 
     return ChangeNotifierProvider(

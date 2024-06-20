@@ -1,3 +1,5 @@
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 ThemeData theme(BuildContext context) {
@@ -48,3 +50,41 @@ InputDecoration decorationForm(String label) {
     ),
   );
 }
+
+DropDownDecoratorProps dropdownDecoration(String label) {
+  return DropDownDecoratorProps(
+    dropdownSearchDecoration: InputDecoration(
+      errorBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.red, width: 2),
+        borderRadius: BorderRadius.all(
+          Radius.circular(4),
+        ),
+      ),
+      labelText: label, labelStyle: TextStyle(color: Colors.black, fontSize: 20),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 4,
+      ),
+    ),
+  );
+}
+
+TextFieldProps searchFieldDecoration() {
+  return const TextFieldProps(
+    decoration: InputDecoration(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      prefixIcon: Icon(Icons.search)
+    ),
+    style: TextStyle(
+      color: Colors.black,
+      fontSize: 16,
+    ),
+  );
+}
+
+
