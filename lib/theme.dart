@@ -51,34 +51,69 @@ InputDecoration decorationForm(String label) {
   );
 }
 
+MenuProps menuPropsDecoration() {
+  return MenuProps(
+    backgroundColor: Color(0xFFDDEEFF),
+    borderRadius: BorderRadius.circular(8),
+    shadowColor: Colors.black
+  );
+}
+
 DropDownDecoratorProps dropdownDecoration(String label) {
   return DropDownDecoratorProps(
     dropdownSearchDecoration: InputDecoration(
+      label: Text(label),
+      labelStyle: const TextStyle(fontSize: 18, color: Colors.blue),
+      enabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.blue, width: 1),
+        borderRadius: BorderRadius.all(
+          Radius.circular(8),
+        ),
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderRadius: BorderRadius.all(
+          Radius.circular(8),
+        ),
+      ),
       errorBorder: const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.red, width: 2),
         borderRadius: BorderRadius.all(
           Radius.circular(4),
         ),
       ),
-      labelText: label, labelStyle: TextStyle(color: Colors.black, fontSize: 20),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 4,
-      ),
     ),
+    baseStyle: TextStyle(color: Colors.black, fontSize: 17),
   );
 }
 
 TextFieldProps searchFieldDecoration() {
   return const TextFieldProps(
     decoration: InputDecoration(
+      labelStyle: TextStyle(fontSize: 18, color: Colors.blue),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.blue, width: 1),
+        borderRadius: BorderRadius.all(
+          Radius.circular(8),
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.blue, width: 2),
+        borderRadius: BorderRadius.all(
+          Radius.circular(8),
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.red, width: 2),
+        borderRadius: BorderRadius.all(
+          Radius.circular(4),
+        ),
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
-      prefixIcon: Icon(Icons.search)
+      prefixIcon: Icon(Icons.search),
+      focusColor: Colors.blue, // Adiciona cor de foco
     ),
     style: TextStyle(
       color: Colors.black,
@@ -86,5 +121,7 @@ TextFieldProps searchFieldDecoration() {
     ),
   );
 }
+
+
 
 

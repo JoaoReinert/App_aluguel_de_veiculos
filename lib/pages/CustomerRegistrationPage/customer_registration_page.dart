@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/database.dart';
@@ -108,7 +109,7 @@ class FunctionsCustomer extends ChangeNotifier {
 
   ///funcao para checar o cnpj do cliente por meio da api
   Future<void> checkCnpj() async {
-    final cnpj = _controllerCNPJ.text;
+    final cnpj = _controllerCNPJ.text.replaceAll(RegExp(r'[^\d]'), '');
     var uri = Uri.https('brasilapi.com.br', '/api/cnpj/v1/$cnpj');
     final response = await http.get(uri);
     if (response.statusCode == 200) {
@@ -122,6 +123,10 @@ class FunctionsCustomer extends ChangeNotifier {
     cnpjverified = true;
     notifyListeners();
   }
+  MaskTextInputFormatter formatterCNPJ = MaskTextInputFormatter(
+    mask: '##.###.###/####-##',
+    type: MaskAutoCompletionType.eager
+  );
 }
 
 ///criacao da tela de resgistro do cliente
@@ -208,6 +213,7 @@ class CustomerRegistrationPage extends StatelessWidget {
                               ),
                               TextFormField(
                                 controller: state.controllerCNPJ,
+                                inputFormatters: [state.formatterCNPJ],
                                 keyboardType: TextInputType.number,
                                 style: const TextStyle(
                                     fontSize: 15, color: Colors.black),

@@ -1,5 +1,5 @@
 ///classe modelo dos veiculos
-class VehiclesModel {
+class VehiclesModelssssssssss {
   ///id para identificar no banco qual é o carro
   late int? id;
   ///marca do veiculo
@@ -16,7 +16,7 @@ class VehiclesModel {
   final String urlImage;
 
   ///instacia do modelo para ser obrigatorio a passagem de dados
-  VehiclesModel({
+  VehiclesModelssssssssss({
     this.id,
     required this.brand,
     required this.model,
