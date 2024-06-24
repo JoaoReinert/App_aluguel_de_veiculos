@@ -50,7 +50,7 @@ class MyWidget extends StatelessWidget {
         '/vehicleRegistrationPage': (context) =>
             const VehicleRegistrationPage(),
         '/rentsPage': (context) => const RentsPage(),
-        '/vehicle': (context) => const VehicleRegisterrrr(),
+        '/vehicle': (context) => const VehicleRegister(),
       },
     );
   }

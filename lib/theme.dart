@@ -8,6 +8,12 @@ ThemeData theme(BuildContext context) {
     scaffoldBackgroundColor: Colors.white,
     textTheme: Typography.whiteCupertino,
     appBarTheme: const AppBarTheme(
+      elevation: 8,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(20)
+        )
+      ),
       toolbarHeight: 75,
       backgroundColor: Colors.blue,
       titleTextStyle: TextStyle(
@@ -80,6 +86,12 @@ DropDownDecoratorProps dropdownDecoration(String label) {
         borderSide: BorderSide(color: Colors.red, width: 2),
         borderRadius: BorderRadius.all(
           Radius.circular(4),
+        ),
+      ),
+      disabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey, width: 2),
+        borderRadius: BorderRadius.all(
+          Radius.circular(8),
         ),
       ),
     ),
