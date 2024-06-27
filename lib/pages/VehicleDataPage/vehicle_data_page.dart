@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
-import '../../models/managers_model.dart';
-///criacao da pagina de dados do gerente
-class ManagerDataPage extends StatelessWidget {
-  ///instancia da pagina
-  const ManagerDataPage({super.key, required this.manager});
-  ///puxando o modelo de gerente que sera exibido nessa pagina
-  final ManagerModel manager;
+import '../../models/vehicles_model.dart';
+
+class VehicleDataPage extends StatelessWidget {
+  VehicleDataPage({super.key, required this.vehicle});
+
+  final VehiclesModels vehicle;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          vehicle.model!.name!,
+          style: const TextStyle(fontSize: 25, color: Colors.black),
+        ),
+        centerTitle: true,
         automaticallyImplyLeading: false,
         toolbarHeight: 60,
       ),
@@ -30,7 +35,7 @@ class ManagerDataPage extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      manager.name,
+                      vehicle.images.toString(),
                       style: const TextStyle(color: Colors.black, fontSize: 35),
                     ),
                   ],
@@ -43,26 +48,26 @@ class ManagerDataPage extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  const Text('Personal information',
+                  const Text('Vehicle information',
                       style: TextStyle(color: Colors.black, fontSize: 25)),
                   const SizedBox(
                     height: 20,
                   ),
-                   Row(
+                  Row(
                     children: [
-                      const Icon(Icons.account_circle),
+                      const Icon(Icons.directions_car_filled_outlined),
                       const SizedBox(
                         width: 10,
                       ),
                       const Text(
-                        'CPF -',
+                        'Brand -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        manager.cpf,
+                        vehicle.brand!.name!,
                         style:
                             const TextStyle(color: Colors.black, fontSize: 18),
                       ),
@@ -73,19 +78,19 @@ class ManagerDataPage extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.map),
+                      const Icon(Icons.confirmation_num),
                       const SizedBox(
                         width: 10,
                       ),
                       const Text(
-                        'State -',
+                        'Plate -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        manager.state.toString().split('.').last.toUpperCase(),
+                        vehicle.plate,
                         style:
                             const TextStyle(color: Colors.black, fontSize: 18),
                       ),
@@ -96,19 +101,19 @@ class ManagerDataPage extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.phone),
+                      const Icon(Icons.calendar_today),
                       const SizedBox(
                         width: 10,
                       ),
                       const Text(
-                        'Phone -',
+                        'Year -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        manager.phone,
+                        vehicle.year!.name!,
                         style:
                             const TextStyle(color: Colors.black, fontSize: 18),
                       ),
@@ -124,14 +129,14 @@ class ManagerDataPage extends StatelessWidget {
                         width: 10,
                       ),
                       const Text(
-                        'Comission -',
+                        'Daily rate -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        '${manager.comission}%',
+                        'R\$${vehicle.dailyRate},00',
                         style:
                             const TextStyle(color: Colors.black, fontSize: 18),
                       ),

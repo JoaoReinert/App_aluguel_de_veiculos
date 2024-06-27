@@ -50,7 +50,7 @@ class HomePage extends StatelessWidget {
               children: const [
                 CustomerRegistrationPage(),
                 ManagersRegisterPage(),
-                VehicleRegistrationPage(),
+                VehicleListPage(),
                 RentsPage(),
               ],
             ),

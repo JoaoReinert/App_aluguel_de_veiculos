@@ -1,10 +1,10 @@
-class VehicleModels {
-  final String id;
-  final String name;
+class ModelsModel {
+  final String? id;
+  final String? name;
 
-  VehicleModels({required this.id, required this.name});
+  ModelsModel({this.id, this.name});
 
   static fromJson(Map<String, dynamic> json) {
-    return VehicleModels(id: json['code'], name: json['name']);
+    return ModelsModel(id: json['code'], name: json['name']);
   }
 }
