@@ -59,18 +59,18 @@ class VehicleState extends ChangeNotifier {
   }
 
   Future<void> insert() async {
-
       final vehicles = VehiclesModels(
           type: selectedType,
           brand: selectedBrand,
           model: selectedModel,
           plate: controllerPlate.text,
           year: selectedYear,
-          dailyRate: controllerDailyRate.text
+          dailyRate: controllerDailyRate.text,
 
       );
 
       await controller.insert(vehicles);
+      await saveImages();
       await load();
 
       _selectedType = null;
@@ -79,8 +79,8 @@ class VehicleState extends ChangeNotifier {
       controllerPlate.clear();
       _selectedYear = null;
       controllerDailyRate.clear();
+      vehiclesImages?.clear();
       notifyListeners();
-
   }
 
   Future<void> delete(VehiclesModels vehicle) async {
@@ -194,12 +194,14 @@ class VehicleState extends ChangeNotifier {
 
     if (!appDirectoryImages.existsSync()) {
       await appDirectoryImages.create();
+      print('Diretório de imagens criado em: $pathImages');
     }
     final pathVehicles = '${appDocumentsDirectory.path}/images/vehicles';
     final appDirectoryVehicles = Directory(pathVehicles);
 
     if (!appDirectoryVehicles.existsSync()) {
       await appDirectoryVehicles.create();
+      print('Diretório de veículos criado em: $pathVehicles');
     }
     final appDirectoryNameVehicles = _controllerPlate.text.trim();
     final pathIdVehicles =
@@ -207,19 +209,21 @@ class VehicleState extends ChangeNotifier {
     final appDirectoryVehiclesId = Directory(pathIdVehicles);
 
     if (!appDirectoryVehiclesId.existsSync()) {
-      await appDirectoryVehiclesId.create();
+      await appDirectoryVehiclesId.create(recursive: true);
+      print('Diretório do veículo criado em: $pathIdVehicles');
     }
     try {
       for (int i = 0; i < vehiclesImages!.length; i++) {
-        final VehicleImage = vehiclesImages![i];
+        final vehicleImage = vehiclesImages![i];
         final fileVehicle = File('${appDirectoryVehiclesId.path}/$i.png');
-
-        final bytes = await VehicleImage.readAsBytes();
+        print('Salvando imagem em: ${fileVehicle.path}');
+        final bytes = await vehicleImage.readAsBytes();
 
         await fileVehicle.writeAsBytes(bytes);
+        print('SALVOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU');
       }
     } catch (e, trace) {
-      print('error: $e, $trace');
+      print('error: $e, $trace -----------------------------------');
     }
   }
 }

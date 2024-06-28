@@ -11,12 +11,19 @@ class VehicleDataPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          vehicle.model!.name!,
-          style: const TextStyle(fontSize: 25, color: Colors.black),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FittedBox(
+              child: Text(
+                vehicle.model!.name!,
+                style: const TextStyle(fontSize: 25, color: Colors.black),
+              ),
+            ),
+          ],
         ),
-        centerTitle: true,
         automaticallyImplyLeading: false,
         toolbarHeight: 60,
       ),
@@ -31,13 +38,13 @@ class VehicleDataPage extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Center(
+              const Center(
                 child: Column(
                   children: [
                     Text(
-                      vehicle.images.toString(),
-                      style: const TextStyle(color: Colors.black, fontSize: 35),
-                    ),
+                      'data',
+                      style: TextStyle(color: Colors.black),
+                    )
                   ],
                 ),
               ),
@@ -70,6 +77,31 @@ class VehicleDataPage extends StatelessWidget {
                         vehicle.brand!.name!,
                         style:
                             const TextStyle(color: Colors.black, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      const Icon(Icons.directions_car),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        'Model -',
+                        style: TextStyle(color: Colors.black, fontSize: 18),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Text(
+                          vehicle.model!.name!,
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 18),
+                        ),
                       ),
                     ],
                   ),

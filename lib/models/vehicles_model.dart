@@ -19,8 +19,6 @@ class VehiclesModels {
   final YearModel? year;
   ///diaria do veiculo
   final String dailyRate;
-  ///imagem do veiculo
-  final List<String>? images;
 
   ///instacia do modelo para ser obrigatorio a passagem de dados
   VehiclesModels({
@@ -31,6 +29,5 @@ class VehiclesModels {
     required this.plate,
     required this.year,
     required this.dailyRate,
-    this.images
   });
 }
