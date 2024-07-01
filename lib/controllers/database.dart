@@ -31,7 +31,7 @@ Future<Database> getDatabase() async {
       if (oldVersion < 3) {
         await db.execute(ManagerTable.createTable);
       }
-      if(oldVersion < 4) {
+      if (oldVersion < 4) {
         await db.execute(VehicleTable.createTable);
       }
     },
@@ -272,14 +272,14 @@ class VehicleController {
 
     for (final item in result) {
       list.add(VehiclesModels(
-          id: item[VehicleTable.id],
-          type: item[VehicleTable.type],
-          brand: BrandsModel(name: item['brand']),
-          model: ModelsModel(name: item['model']),
-          plate: item[VehicleTable.plate],
-          year: YearModel(name: item['year']),
-          dailyRate: item[VehicleTable.dailyRate],
-          ));
+        id: item[VehicleTable.id],
+        type: item[VehicleTable.type],
+        brand: BrandsModel(name: item['brand']),
+        model: ModelsModel(name: item['model']),
+        plate: item[VehicleTable.plate],
+        year: YearModel(name: item['year']),
+        dailyRate: item[VehicleTable.dailyRate],
+      ));
     }
     return list;
   }

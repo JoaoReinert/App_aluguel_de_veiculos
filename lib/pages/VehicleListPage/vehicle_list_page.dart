@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -32,11 +33,10 @@ class FunctionsListVehicle extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> pickImages(String plate) async {
+  Future<String?> pickImages(String plate) async {
     final appDocumentsDirectory = await getApplicationSupportDirectory();
 
     final image = '${appDocumentsDirectory.path}/images/vehicles/$plate/0.png';
-    print('IMAGEMMMMMMMMMMM CAMINHOOOOOOOOOOOOOOO $image');
 
     return image;
   }
@@ -60,7 +60,7 @@ class VehicleListPage extends StatelessWidget {
                 padding: EdgeInsets.all(8.0),
                 child: StandardFormButton(
                   onpressed: () async {
-                    await Navigator.pushNamed(context, '/vehicle');
+                    await Navigator.pushNamed(context, '/vehicleRegisterPage');
                     state.load();
                   },
                   icon: const Icon(
@@ -91,7 +91,10 @@ class VehicleListPage extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.all(2),
                         child: Card(
-                          color: const Color.fromARGB(255, 203, 202, 202),
+                          shape: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          color: Colors.grey[350],
                           elevation: 3,
                           shadowColor: Colors.black,
                           child: ListTile(
@@ -104,48 +107,61 @@ class VehicleListPage extends StatelessWidget {
                                   color: Colors.white, width: 1),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            leading: FutureBuilder<String>(
+                            leading: FutureBuilder<String?>(
                               future: state.pickImages(vehicle.plate),
                               builder: (context, snapshot) {
-                                  if (File(snapshot.data!).existsSync()) {
-                                    return SizedBox(
-                                      width: 60,
-                                      height: 60,
-                                      child: Image.file(
-                                        File(snapshot.data!),
-                                      ),
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasData &&
+                                      File(snapshot.data!).existsSync()) {
+                                    return Image.file(
+                                      File(snapshot.data!),
+                                      fit: BoxFit.fill,
                                     );
                                   } else {
                                     return const Icon(
                                         Icons.image_not_supported);
                                   }
+                                } else {
+                                  return const CircularProgressIndicator();
+                                }
                               },
                             ),
                             title: Text(
                               vehicle.model!.name!,
+                              maxLines: 1,
                               style: const TextStyle(fontSize: 20),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            subtitle:
-                                Text('Daily rate: R\$ ${vehicle.dailyRate},00'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          StandardDeleteDialog(
-                                        name: vehicle.model!.name!,
-                                        function: () async {
-                                          await state.delete(vehicle);
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(Icons.delete),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Daily rate: R\$ ${vehicle.dailyRate},00',
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 15),
                                 ),
+                                const Divider(color: Colors.black38),
+                                const SizedBox(height: 5),
+                                Text(vehicle.year!.name!),
                               ],
+                            ),
+                            trailing: IconButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      StandardDeleteDialog(
+                                    name: vehicle.model!.name!,
+                                    function: () async {
+                                      await state.delete(vehicle);
+                                    },
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.delete,
+                                  color: Colors.red),
                             ),
                           ),
                         ),

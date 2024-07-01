@@ -313,7 +313,10 @@ class CustomerRegistrationPage extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.all(2),
                           child: Card(
-                            color: const Color.fromARGB(255, 203, 202, 202),
+                            shape: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            color: Colors.grey[350],
                             elevation: 3,
                             shadowColor: Colors.black,
                             child: ListTile(
@@ -348,7 +351,7 @@ class CustomerRegistrationPage extends StatelessWidget {
                                         ),
                                       );
                                     },
-                                    icon: const Icon(Icons.delete),
+                                    icon: const Icon(Icons.delete, color: Colors.red),
                                   ),
                                 ],
                               ),

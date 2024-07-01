@@ -9,6 +9,7 @@ import 'pages/HomePage/home_page.dart';
 import 'pages/ManagerDataPage/manager_data_page.dart';
 import 'pages/ManagersRegisterPage/managers_register_page.dart';
 import 'pages/RentsPage/rents_page.dart';
+import 'pages/RentsRegisterPage/rents_register_page.dart';
 import 'pages/VehicleDataPage/vehicle_data_page.dart';
 import 'pages/VehicleRegistrationPage/vehicle_registration_page.dart';
 import 'theme.dart';
@@ -49,6 +50,13 @@ class MyWidget extends StatelessWidget {
               return VehicleDataPage(vehicle: vehicle);
             },
           );
+        } else if (settings.name == '/rentsRegisterPage') {
+          final vehicle = settings.arguments as VehiclesModels;
+          return MaterialPageRoute(
+            builder: (context) {
+              return RentsRegisterPage(vehicle: vehicle);
+            },
+          );
         }
       },
       routes: {
@@ -58,7 +66,7 @@ class MyWidget extends StatelessWidget {
         '/managersRegisterPage': (context) => const ManagersRegisterPage(),
         '/vehicleListPage': (context) => const VehicleListPage(),
         '/rentsPage': (context) => const RentsPage(),
-        '/vehicle': (context) => const VehicleRegister(),
+        '/vehicleRegisterPage': (context) => const VehicleRegister(),
       },
     );
   }

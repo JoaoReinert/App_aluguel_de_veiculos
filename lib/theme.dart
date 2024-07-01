@@ -6,7 +6,7 @@ ThemeData theme(BuildContext context) {
   final theme = Theme.of(context);
   return theme.copyWith(
     scaffoldBackgroundColor: Colors.white,
-    textTheme: Typography.whiteCupertino,
+    textTheme: Typography.blackCupertino,
     appBarTheme: const AppBarTheme(
       elevation: 8,
       shape: const RoundedRectangleBorder(
@@ -28,6 +28,13 @@ ThemeData theme(BuildContext context) {
       unselectedLabelStyle: TextStyle(
         color: Colors.grey,
       ),
+    ),
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: Colors.white,
+      dayStyle: TextStyle(color: Colors.blue),
+      yearStyle: TextStyle(color: Colors.blue),
+      headerForegroundColor: Colors.white,
+      headerBackgroundColor: Colors.blue,
     ),
   );
 }
