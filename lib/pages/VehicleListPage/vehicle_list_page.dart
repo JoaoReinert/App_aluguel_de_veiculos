@@ -53,6 +53,7 @@ class VehicleListPage extends StatelessWidget {
       create: (context) => FunctionsListVehicle(),
       child: Consumer<FunctionsListVehicle>(builder: (_, state, __) {
         return Scaffold(
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             title: const Text('Vehicles'),
             actions: [
@@ -138,7 +139,7 @@ class VehicleListPage extends StatelessWidget {
                               children: [
                                 const SizedBox(height: 5),
                                 Text(
-                                  'Daily rate: R\$ ${vehicle.dailyRate},00',
+                                  'R\$ ${vehicle.dailyRate},00',
                                   style: const TextStyle(
                                       color: Colors.black, fontSize: 15),
                                 ),

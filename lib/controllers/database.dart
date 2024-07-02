@@ -48,7 +48,9 @@ class CustomerTable {
   $cnpj TEXT NOT NULL,
   $city TEXT NOT NULL,
   $state TEXT NOT NULL,
-  $companyName TEXT NOT NULL
+  $companyName TEXT NOT NULL,
+  $managerId INTEGER,
+  FOREIGN KEY ($managerId) REFERENCES ${ManagerTable.tableName}(${ManagerTable.id})
   );
   ''';
 
@@ -61,6 +63,7 @@ class CustomerTable {
   static const String city = 'city';
   static const String state = 'state';
   static const String companyName = 'companyName';
+  static const String managerId = 'managerId';
 
   static Map<String, dynamic> tomap(CustomerModel customer) {
     final map = <String, dynamic>{};
@@ -72,6 +75,7 @@ class CustomerTable {
     map[CustomerTable.city] = customer.city;
     map[CustomerTable.state] = customer.state.toString();
     map[CustomerTable.companyName] = customer.companyName;
+    map[CustomerTable.managerId] = customer.managerId;
 
     return map;
   }
@@ -120,6 +124,7 @@ class CustomerController {
               (element) => element.toString() == (item[CustomerTable.state]),
         ),
         companyName: item[CustomerTable.companyName] ?? '',
+        managerId: item[CustomerTable.managerId] ?? 0,
       ));
     }
 

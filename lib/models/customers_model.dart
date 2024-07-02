@@ -23,6 +23,9 @@ class CustomerModel {
   ///nome da empresa do cliente
   final String companyName;
 
+  ///id do manager para ligacao
+  late int? managerId;
+
   ///instacia do modelo para ser obrigatorio a passagem de dados
   CustomerModel(
       {this.id,
@@ -31,6 +34,7 @@ class CustomerModel {
       required this.cnpj,
       required this.city,
       required this.state,
-      required this.companyName
+      required this.companyName,
+        this.managerId
       });
 }

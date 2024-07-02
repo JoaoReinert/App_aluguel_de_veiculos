@@ -238,7 +238,7 @@ class VehicleRegister extends StatelessWidget {
       child: Consumer<VehicleState>(
         builder: (_, state, __) {
           return Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               backgroundColor: Colors.blueAccent,
               title: const Text('Vehicle Registration'),

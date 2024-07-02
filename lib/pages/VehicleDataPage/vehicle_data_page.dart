@@ -35,6 +35,7 @@ class VehicleDataPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -86,12 +87,10 @@ class VehicleDataPage extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Divider(),
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text('Vehicle information',
-                        style: TextStyle(color: Colors.black, fontSize: 25)),
+                    const Divider(),
                     const SizedBox(
                       height: 20,
                     ),

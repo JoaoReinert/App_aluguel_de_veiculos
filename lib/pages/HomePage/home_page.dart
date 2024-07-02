@@ -44,6 +44,7 @@ class HomePage extends StatelessWidget {
       child: Consumer<HomeState>(
         builder: (_, state, __) {
           return Scaffold(
+            resizeToAvoidBottomInset: true,
             body: PageView(
               controller: state.pc,
               onPageChanged: (page) => state.setCurrentPage(page),

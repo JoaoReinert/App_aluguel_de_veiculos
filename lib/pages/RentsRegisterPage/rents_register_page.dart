@@ -10,12 +10,13 @@ import '../../models/vehicles_model.dart';
 import '../../theme.dart';
 
 class RentsRegisterState extends ChangeNotifier {
-  RentsRegisterState() {
+  RentsRegisterState(this.vehicle) {
     load();
   }
-
+  final VehiclesModels vehicle;
   List<String> customerNames = [];
   int totalDays = 0;
+  double price = 0.0;
 
   final controller = CustomerController();
 
@@ -41,6 +42,8 @@ class RentsRegisterState extends ChangeNotifier {
     if (picked != null) {
       initialDateController.text = picked.toString().split(' ')[0];
     }
+    calculateDays();
+    calculatePrice();
     notifyListeners();
   }
 
@@ -54,10 +57,30 @@ class RentsRegisterState extends ChangeNotifier {
     if (picked != null) {
       finalDateController.text = picked.toString().split(' ')[0];
     }
+    calculateDays();
+    calculatePrice();
     notifyListeners();
   }
 
+  void calculateDays() {
+    if (initialDateController.text.isNotEmpty &&
+        finalDateController.text.isNotEmpty) {
+      //convertendo as stringds para datetime
+      DateTime initialDate = DateTime.parse(initialDateController.text);
+      DateTime finalDate = DateTime.parse(finalDateController.text);
+      Duration totalNumbersOfDay = finalDate.difference(initialDate);
+      totalDays = totalNumbersOfDay.inDays;
 
+      notifyListeners();
+    }
+  }
+
+  void calculatePrice() {
+    double dailyRate = double.parse(vehicle.dailyRate);
+    double totalDaysDouble = totalDays.toDouble();
+    price = totalDaysDouble * dailyRate;
+    notifyListeners();
+  }
 
 // void updateCustomer(newValue) {
 //   _selectedCustomer = newValue;
@@ -73,124 +96,131 @@ class RentsRegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => RentsRegisterState(),
-      child: Consumer<RentsRegisterState>(builder: (_, state, __) {
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            backgroundColor: Colors.blueAccent,
-            title: const Text('Vehicle Registration'),
-            centerTitle: true,
-            automaticallyImplyLeading: false,
-            toolbarHeight: 60,
-          ),
-          backgroundColor: Colors.blue,
-          body: SingleChildScrollView(
-            child: Form(
-              // key: state.vehicleKey,
-              child: Container(
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Vehicle: ${vehicle.model!.name!}',
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 20),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      DropdownSearch<String>(
-                        enabled: true,
-                        dropdownDecoratorProps: dropdownDecoration('Customer'),
-                        popupProps: PopupProps.menu(
-                          searchFieldProps: searchFieldDecoration(),
-                          menuProps: menuPropsDecoration(),
-                          showSearchBox: true,
+      create: (context) => RentsRegisterState(vehicle),
+      child: Consumer<RentsRegisterState>(
+        builder: (_, state, __) {
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.blueAccent,
+              title: const Text('Vehicle Registration'),
+              centerTitle: true,
+              automaticallyImplyLeading: false,
+              toolbarHeight: 60,
+            ),
+            backgroundColor: Colors.blue,
+            body: SingleChildScrollView(
+              child: Form(
+                // key: state.vehicleKey,
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Text(
+                          vehicle.model!.name!,
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 20),
                         ),
-                        items: state.customerNames,
-                        onChanged: (value) {
-                          if (value != null) {
-                            // state.updateCustomer(value);
-                          }
-                        },
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Select customer';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: state.initialDateController,
-                              onTap: () {
-                                state.selectInitialDate(context);
-                              },
-                              decoration: decorationForm('Initial Date'),
-                              readOnly: true,
+                        const Divider(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        DropdownSearch<String>(
+                          enabled: true,
+                          dropdownDecoratorProps:
+                              dropdownDecoration('Customer'),
+                          popupProps: PopupProps.menu(
+                            searchFieldProps: searchFieldDecoration(),
+                            menuProps: menuPropsDecoration(),
+                            showSearchBox: true,
+                          ),
+                          items: state.customerNames,
+                          onChanged: (value) {
+                            if (value != null) {
+                              // state.updateCustomer(value);
+                            }
+                          },
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Select customer';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: state.initialDateController,
+                                onTap: () {
+                                  state.selectInitialDate(context);
+                                },
+                                decoration: decorationForm('Initial Date'),
+                                readOnly: true,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: state.finalDateController,
+                                onTap: () {
+                                  state.selectFinalDate(context);
+                                },
+                                decoration: decorationForm('Final Date'),
+                                readOnly: true,
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        if(state.totalDays != 0 && state.price != 0)
+                        Text('Total numbers of days: ${state.totalDays}'),
+                        if(state.totalDays != 0 && state.price != 0)
+                        Text('Price: R\$${state.price}'),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            padding: EdgeInsets.symmetric(horizontal: 80),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: state.finalDateController,
-                              onTap: () {
-                                state.selectFinalDate(context);
-                              },
-                              decoration: decorationForm('Final Date'),
-                              readOnly: true,
+                          child: const Text(
+                            'SAVE RENT',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Text('Total numbers of days: ${state.totalDays}'),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 100, vertical: 7),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text(
-                          'Save',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 }

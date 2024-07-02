@@ -141,7 +141,7 @@ class CustomerRegistrationPage extends StatelessWidget {
       child: Consumer<FunctionsCustomer>(
         builder: (_, state, __) {
           return Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               title: const Text('Customers'),
               actions: [

@@ -106,7 +106,7 @@ class ManagersRegisterPage extends StatelessWidget {
       child: Consumer<FunctionManager>(
         builder: (_, state, __) {
           return Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               title: const Text('Managers'),
               actions: [
