@@ -6,8 +6,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/database.dart';
-import '../../enum_states.dart';
 import '../../models/customers_model.dart';
+import '../../models/state_model.dart';
 import '../../theme.dart';
 import '../../utils/standard_delete_dialog.dart';
 import '../../utils/standard_dialog.dart';
@@ -26,13 +26,16 @@ class FunctionsCustomer extends ChangeNotifier {
 
   /// Controlador para operações relacionadas aos clientes
   final controller = CustomerController();
+  final controllerEstado = EstadoController();
 
   final _controllerName = TextEditingController();
   final _controllerPhone = TextEditingController();
   final _controllerCNPJ = TextEditingController();
   final _controllerCity = TextEditingController();
-  States? _selectItem;
+  EstadoModel? _selectItem;
   final _listCustomer = <CustomerModel>[];
+  final _listStates = <EstadoModel>[];
+  String? stateError;
 
   ///variavel para o nome da empresa do cliente
   String companyName = '';
@@ -58,27 +61,60 @@ class FunctionsCustomer extends ChangeNotifier {
   TextEditingController get controllerCity => _controllerCity;
 
   ///Getter para o controlador de item selecionado (estado)
-  States? get selectItem => _selectItem;
+  EstadoModel? get selectItem => _selectItem;
 
   /// Getter para a lista de modelos de cliente
   List<CustomerModel> get listCustomer => _listCustomer;
 
+  ///Getter para a lista de modelos de estado
+  List<EstadoModel> get listStates => _listStates;
+
   /// Função assíncrona para carregar os dados dos clientes
   Future<void> load() async {
     final list = await controller.select();
+    final listState = await controllerEstado.select();
     _listCustomer.clear();
     _listCustomer.addAll(list);
+    _listStates.clear();
+    _listStates.addAll(listState);
     notifyListeners();
+  }
+  ///validacao do estado
+  Future<bool> stateValidator() async {
+
+    if (selectItem == null) {
+      stateError = 'Enter the customer state';
+      notifyListeners();
+      return false;
+    }
+
+    bool stateManager = await controller.stateVerification(selectItem!.cdEstado);
+
+    if (!stateManager) {
+      stateError = 'State without a manager';
+      notifyListeners();
+      return false;
+    }
+
+    stateError = null;
+    notifyListeners();
+    return true;
   }
 
   /// Função assíncrona para inserir um novo cliente
   Future<void> insert() async {
+
+    bool stateValidate = await stateValidator();
+    if (!stateValidate) {
+      return;
+    }
+
     final customers = CustomerModel(
         name: controllerName.text,
         phone: controllerPhone.text,
         cnpj: controllerCNPJ.text,
         city: controllerCity.text,
-        state: selectItem,
+        state: selectItem!,
         companyName: companyName);
 
     await controller.insert(customers);
@@ -90,6 +126,7 @@ class FunctionsCustomer extends ChangeNotifier {
     controllerCity.clear();
     _selectItem = null;
     companyName = '';
+    stateError = null;
     notifyListeners();
   }
 
@@ -102,8 +139,9 @@ class FunctionsCustomer extends ChangeNotifier {
   }
 
   ///funcao de update para controlar qual estado foi colocado
-  void updateState(States newValue) {
+  void updateState(EstadoModel newValue) {
     _selectItem = newValue;
+    stateError = null;
     notifyListeners();
   }
 
@@ -123,10 +161,9 @@ class FunctionsCustomer extends ChangeNotifier {
     cnpjverified = true;
     notifyListeners();
   }
+
   MaskTextInputFormatter formatterCNPJ = MaskTextInputFormatter(
-    mask: '##.###.###/####-##',
-    type: MaskAutoCompletionType.eager
-  );
+      mask: '##.###.###/####-##', type: MaskAutoCompletionType.eager);
 }
 
 ///criacao da tela de resgistro do cliente
@@ -176,8 +213,9 @@ class CustomerRegistrationPage extends StatelessWidget {
                                   onPressed: () async {
                                     state.cnpjverified = false;
                                     state.error = false;
+                                    bool validateState = await state.stateValidator();
                                     if (state.customerKey.currentState!
-                                        .validate()) {
+                                        .validate() && validateState) {
                                       await state.checkCnpj();
                                       if (state.cnpjverified && !state.error) {
                                         await state.insert();
@@ -241,10 +279,13 @@ class CustomerRegistrationPage extends StatelessWidget {
                                   return null;
                                 },
                               ),
-                              DropdownButtonFormField<States>(
+                              DropdownButtonFormField<EstadoModel>(
                                 validator: (value) {
                                   if (value == null) {
                                     return 'Enter the customers state';
+                                  }
+                                  if (state.stateError != null) {
+                                    return state.stateError;
                                   }
                                   return null;
                                 },
@@ -254,15 +295,11 @@ class CustomerRegistrationPage extends StatelessWidget {
                                     state.updateState(value);
                                   }
                                 },
-                                items: States.values.map(
+                                items: state.listStates.map(
                                   (state) {
                                     return DropdownMenuItem(
                                       value: state,
-                                      child: Text(state
-                                          .toString()
-                                          .split('.')
-                                          .last
-                                          .toUpperCase()),
+                                      child: Text(state.sgEstado),
                                     );
                                   },
                                 ).toList(),
@@ -351,7 +388,8 @@ class CustomerRegistrationPage extends StatelessWidget {
                                         ),
                                       );
                                     },
-                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
                                   ),
                                 ],
                               ),

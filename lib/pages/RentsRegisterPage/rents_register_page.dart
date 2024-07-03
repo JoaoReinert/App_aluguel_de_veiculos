@@ -10,13 +10,17 @@ import '../../models/vehicles_model.dart';
 import '../../theme.dart';
 
 class RentsRegisterState extends ChangeNotifier {
+
   RentsRegisterState(this.vehicle) {
     load();
   }
+
   final VehiclesModels vehicle;
   List<String> customerNames = [];
+  List<CustomerModel> customers = [];
   int totalDays = 0;
   double price = 0.0;
+  double managerComission = 0.0;
 
   final controller = CustomerController();
 
@@ -27,7 +31,7 @@ class RentsRegisterState extends ChangeNotifier {
   CustomerModel? get selectedCustomer => _selectedCustomer;
 
   Future<void> load() async {
-    final customers = await controller.select();
+    customers = await controller.select();
     customerNames = customers.map((pickName) => pickName.name).toList();
     notifyListeners();
   }
@@ -59,6 +63,7 @@ class RentsRegisterState extends ChangeNotifier {
     }
     calculateDays();
     calculatePrice();
+    calculateManagerComission();
     notifyListeners();
   }
 
@@ -82,10 +87,22 @@ class RentsRegisterState extends ChangeNotifier {
     notifyListeners();
   }
 
-// void updateCustomer(newValue) {
-//   _selectedCustomer = newValue;
-//   notifyListeners();
-// }
+  void calculateManagerComission() {
+    if (_selectedCustomer != null && _selectedCustomer!.manager != null) {
+      double comission = double.parse(_selectedCustomer!.manager!.comission);
+      double formattedComission = comission / 100;
+      managerComission = price * formattedComission;
+    } else {
+      managerComission = 0.0;
+    }
+    notifyListeners();
+  }
+
+  void updateCustomer(String customerName) {
+    _selectedCustomer = customers.firstWhere((customer) => customer.name == customerName);
+    calculateManagerComission();
+    notifyListeners();
+  }
 }
 
 class RentsRegisterPage extends StatelessWidget {
@@ -144,7 +161,7 @@ class RentsRegisterPage extends StatelessWidget {
                           items: state.customerNames,
                           onChanged: (value) {
                             if (value != null) {
-                              // state.updateCustomer(value);
+                              state.updateCustomer(value);
                             }
                           },
                           validator: (value) {
@@ -187,10 +204,12 @@ class RentsRegisterPage extends StatelessWidget {
                         const SizedBox(
                           height: 20,
                         ),
-                        if(state.totalDays != 0 && state.price != 0)
-                        Text('Total numbers of days: ${state.totalDays}'),
-                        if(state.totalDays != 0 && state.price != 0)
-                        Text('Price: R\$${state.price}'),
+                        if (state.totalDays != 0 && state.price != 0)
+                          Text('Total numbers of days: ${state.totalDays}'),
+                        if (state.totalDays != 0 && state.price != 0)
+                          Text('Price: R\$${state.price}'),
+                        Text(
+                            'Manager Commission: R\$${state.managerComission} \n ${state.selectedCustomer!.manager!.name}'),
                         const SizedBox(
                           height: 20,
                         ),

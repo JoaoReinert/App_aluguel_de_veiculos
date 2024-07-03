@@ -1,4 +1,4 @@
-import '../enum_states.dart';
+import 'package:projeto_final_lince/models/state_model.dart';
 
 ///classe modelo dos gerentes
 class ManagerModel {
@@ -9,19 +9,20 @@ class ManagerModel {
   final String name;
   ///cpf do gerente
   final String cpf;
-  ///estado do gerente
-  final States? state;
   ///telefone do gerente
   final String phone;
   ///comissao do gerente
   final String comission;
+  ///estado
+  final EstadoModel state;
 
   ///instacia do modelo para ser obrigatorio a passagem de dados
   ManagerModel(
       {this.id,
       required this.name,
       required this.cpf,
-      required this.state,
       required this.phone,
-      required this.comission});
+      required this.comission,
+        required this.state
+      });
 }

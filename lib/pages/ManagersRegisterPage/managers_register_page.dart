@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../controllers/database.dart';
 import '../../enum_states.dart';
 import '../../models/managers_model.dart';
+import '../../models/state_model.dart';
 import '../../theme.dart';
 import '../../utils/standard_delete_dialog.dart';
 import '../../utils/standard_form_button.dart';
@@ -21,14 +22,16 @@ class FunctionManager extends ChangeNotifier {
 
   /// Controlador para operações relacionadas aos clientes
   final controller = ManagerController();
+  final controllerEstado = EstadoController();
 
   final _controllerName = TextEditingController();
   final _controllerCPF = TextEditingController();
   final _controllerState = TextEditingController();
   final _controllerPhone = TextEditingController();
   final _controllerComission = TextEditingController();
-  States? _selectItem;
+  EstadoModel? _selectItem;
   final _listManager = <ManagerModel>[];
+  final _listEstado = <EstadoModel>[];
 
   /// Getter para o controlador de texto do campo nome
   TextEditingController get controllerName => _controllerName;
@@ -46,27 +49,37 @@ class FunctionManager extends ChangeNotifier {
   TextEditingController get controllerComission => _controllerComission;
 
   ///Getter para o controlador de item selecionado (estado)
-  States? get selectItem => _selectItem;
+  EstadoModel? get selectItem => _selectItem;
 
   /// Getter para a lista de modelos de cliente
   List<ManagerModel> get listManager => _listManager;
 
+  List<EstadoModel> get listEstado => _listEstado;
+
   /// Função assíncrona para carregar os dados dos gerentes
   Future<void> load() async {
     final list = await controller.select();
+    final listEstado = await controllerEstado.select();
     _listManager.clear();
     _listManager.addAll(list);
+    _listEstado..clear()..addAll(listEstado);
     notifyListeners();
   }
 
   /// Função assíncrona para inserir um novo gerente
   Future<void> insert() async {
+
+    if(selectItem == null) {
+      print('erroooooooo');
+    }
+
     final managers = ManagerModel(
         name: controllerName.text,
         cpf: controllerCPF.text,
-        state: selectItem,
+        state: selectItem!,
         phone: controllerPhone.text,
-        comission: controllerComission.text);
+        comission: controllerComission.text,
+    );
 
     await controller.insert(managers);
     await load();
@@ -80,6 +93,7 @@ class FunctionManager extends ChangeNotifier {
     notifyListeners();
   }
 
+
   ///funcao de delete para deletar o gerente do banco de dados
   Future<void> delete(ManagerModel manager) async {
     await controller.delete(manager);
@@ -88,7 +102,7 @@ class FunctionManager extends ChangeNotifier {
   }
 
   ///funcao de update para controlar qual estado foi colocado
-  void updateState(States newValue) {
+  void updateState(EstadoModel newValue) {
     _selectItem = newValue;
     notifyListeners();
   }
@@ -178,20 +192,18 @@ class ManagersRegisterPage extends StatelessWidget {
                                   return null;
                                 },
                               ),
-                              DropdownButtonFormField<States>(
+                              DropdownButtonFormField<EstadoModel>(
                                 value: state.selectItem,
                                 onChanged: (value) {
-                                  // state.onChangedStates!(value);
+                                  state.updateState(value!);
                                 },
-                                items: States.values.map(
+                                items: state.listEstado.map(
                                   (state) {
                                     return DropdownMenuItem(
                                       value: state,
                                       child: Text(state
-                                          .toString()
-                                          .split('.')
-                                          .last
-                                          .toUpperCase()),
+                                          .sgEstado
+                                      ),
                                     );
                                   },
                                 ).toList(),

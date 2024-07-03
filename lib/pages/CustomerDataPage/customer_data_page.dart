@@ -133,7 +133,7 @@ class CustomerDataPage extends StatelessWidget {
                         width: 10,
                       ),
                       Text(
-                        customer.state.toString().split('.').last.toUpperCase(),
+                        customer.state.sgEstado,
                         style:
                             const TextStyle(color: Colors.black, fontSize: 18),
                       ),
@@ -169,7 +169,7 @@ class CustomerDataPage extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  const Row(
+                   Row(
                     children: [
                       Icon(Icons.work),
                       SizedBox(
@@ -182,8 +182,9 @@ class CustomerDataPage extends StatelessWidget {
                       SizedBox(
                         width: 10,
                       ),
+                      if(customer.manager!.name != null)
                       Text(
-                        'Exemplo',
+                        customer.manager!.name,
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ],

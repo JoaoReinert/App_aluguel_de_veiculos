@@ -1,4 +1,5 @@
-import '../enum_states.dart';
+import 'managers_model.dart';
+import 'state_model.dart';
 
 ///classe modelo dos clientes
 class CustomerModel {
@@ -17,14 +18,14 @@ class CustomerModel {
   ///cidade do cliente
   final String city;
 
-  ///estado do cliente
-  final States? state;
-
   ///nome da empresa do cliente
   final String companyName;
 
-  ///id do manager para ligacao
-  late int? managerId;
+  ///estado do cliente
+  final EstadoModel state;
+
+  ///gerente responsavel pelo cliente
+  late ManagerModel? manager;
 
   ///instacia do modelo para ser obrigatorio a passagem de dados
   CustomerModel(
@@ -35,6 +36,6 @@ class CustomerModel {
       required this.city,
       required this.state,
       required this.companyName,
-        this.managerId
+        this.manager,
       });
 }

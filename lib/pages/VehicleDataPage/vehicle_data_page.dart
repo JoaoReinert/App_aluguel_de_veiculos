@@ -45,7 +45,7 @@ class VehicleDataPage extends StatelessWidget {
       ),
       backgroundColor: Colors.blue,
       body: Container(
-        margin: const EdgeInsets.all(8),
+        margin: const EdgeInsets.fromLTRB(8, 0, 8, 0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),

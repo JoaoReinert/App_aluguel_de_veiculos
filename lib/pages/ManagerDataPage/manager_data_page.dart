@@ -86,7 +86,7 @@ class ManagerDataPage extends StatelessWidget {
                         width: 10,
                       ),
                       Text(
-                        manager.state.toString().split('.').last.toUpperCase(),
+                        manager.state.sgEstado,
                         style:
                             const TextStyle(color: Colors.black, fontSize: 18),
                       ),
