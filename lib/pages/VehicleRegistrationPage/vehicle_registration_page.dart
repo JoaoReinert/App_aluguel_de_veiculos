@@ -66,7 +66,6 @@ class VehicleState extends ChangeNotifier {
           plate: controllerPlate.text,
           year: selectedYear,
           dailyRate: controllerDailyRate.text,
-
       );
 
       await controller.insert(vehicles);
@@ -196,6 +195,7 @@ class VehicleState extends ChangeNotifier {
       await appDirectoryImages.create();
       print('Diretório de imagens criado em: $pathImages');
     }
+
     final pathVehicles = '${appDocumentsDirectory.path}/images/vehicles';
     final appDirectoryVehicles = Directory(pathVehicles);
 
@@ -212,6 +212,7 @@ class VehicleState extends ChangeNotifier {
       await appDirectoryVehiclesId.create(recursive: true);
       print('Diretório do veículo criado em: $pathIdVehicles');
     }
+
     try {
       for (int i = 0; i < vehiclesImages!.length; i++) {
         final vehicleImage = vehiclesImages![i];

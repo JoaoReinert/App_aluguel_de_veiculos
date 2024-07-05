@@ -6,14 +6,16 @@ import 'package:provider/provider.dart';
 
 import '../../controllers/database.dart';
 import '../../models/customers_model.dart';
+import '../../models/rents_model.dart';
 import '../../models/vehicles_model.dart';
 import '../../theme.dart';
 
 class RentsRegisterState extends ChangeNotifier {
-
   RentsRegisterState(this.vehicle) {
     load();
   }
+
+  final rentsKey = GlobalKey<FormState>();
 
   final VehiclesModels vehicle;
   List<String> customerNames = [];
@@ -23,8 +25,10 @@ class RentsRegisterState extends ChangeNotifier {
   double managerComission = 0.0;
 
   final controller = CustomerController();
+  final controllerRent = RentsController();
 
   CustomerModel? _selectedCustomer;
+
   TextEditingController initialDateController = TextEditingController();
   TextEditingController finalDateController = TextEditingController();
 
@@ -34,6 +38,31 @@ class RentsRegisterState extends ChangeNotifier {
     customers = await controller.select();
     customerNames = customers.map((pickName) => pickName.name).toList();
     notifyListeners();
+  }
+
+  Future<void> insert() async {
+    if (vehicle.id == null || _selectedCustomer == null) {
+      return;
+    }
+
+    final rent = RentsModel(
+        vehicleId: vehicle.id!,
+        price: price.toString(),
+        totalDays: totalDays,
+        managerCommission: managerComission,
+        customerId: selectedCustomer!.id!,
+        initialDate: DateTime.parse(initialDateController.text),
+        finalDate: DateTime.parse(finalDateController.text));
+
+    await controllerRent.insert(rent);
+    await load();
+
+    price = 0.0;
+    managerComission = 0.0;
+    totalDays = 0;
+    _selectedCustomer = null;
+    initialDateController.clear();
+    finalDateController.clear();
   }
 
   Future<void> selectInitialDate(BuildContext context) async {
@@ -99,7 +128,8 @@ class RentsRegisterState extends ChangeNotifier {
   }
 
   void updateCustomer(String customerName) {
-    _selectedCustomer = customers.firstWhere((customer) => customer.name == customerName);
+    _selectedCustomer =
+        customers.firstWhere((customer) => customer.name == customerName);
     calculateManagerComission();
     notifyListeners();
   }
@@ -129,7 +159,7 @@ class RentsRegisterPage extends StatelessWidget {
             backgroundColor: Colors.blue,
             body: SingleChildScrollView(
               child: Form(
-                // key: state.vehicleKey,
+                key: state.rentsKey,
                 child: Container(
                   margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -171,50 +201,139 @@ class RentsRegisterPage extends StatelessWidget {
                             return null;
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: state.initialDateController,
-                                onTap: () {
-                                  state.selectInitialDate(context);
-                                },
-                                decoration: decorationForm('Initial Date'),
-                                readOnly: true,
+                        if (state.selectedCustomer?.name != null)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: state.initialDateController,
+                                  onTap: () {
+                                    state.selectInitialDate(context);
+                                  },
+                                  decoration: decorationForm('Initial Date'),
+                                  readOnly: true,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Required date';
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: TextField(
-                                controller: state.finalDateController,
-                                onTap: () {
-                                  state.selectFinalDate(context);
-                                },
-                                decoration: decorationForm('Final Date'),
-                                readOnly: true,
+                              const SizedBox(
+                                width: 10,
                               ),
-                            )
-                          ],
-                        ),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: state.finalDateController,
+                                  onTap: () {
+                                    state.selectFinalDate(context);
+                                  },
+                                  decoration: decorationForm('Final Date'),
+                                  readOnly: true,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Required date';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         const SizedBox(
                           height: 20,
                         ),
                         if (state.totalDays != 0 && state.price != 0)
-                          Text('Total numbers of days: ${state.totalDays}'),
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: Column(
+                                children: [
+                                  const Text(
+                                    'Total days',
+                                    style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${state.totalDays}',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                ],
+                              )),
+                              Expanded(
+                                  child: Column(
+                                children: [
+                                  const Text(
+                                    'Price',
+                                    style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    'R\$${state.price.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                ],
+                              )),
+                            ],
+                          ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         if (state.totalDays != 0 && state.price != 0)
-                          Text('Price: R\$${state.price}'),
-                        Text(
-                            'Manager Commission: R\$${state.managerComission} \n ${state.selectedCustomer!.manager!.name}'),
+                          Column(
+                            children: [
+                              Text(
+                                'Manager Commission, ${state._selectedCustomer!.manager!.name}',
+                                style: const TextStyle(
+                                  color: Colors.blueAccent,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                'R\$${state.managerComission.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            ],
+                          ),
                         const SizedBox(
                           height: 20,
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            if (state.rentsKey.currentState!.validate()) {
+                              state.insert();
+                              Navigator.pushReplacementNamed(
+                                  context, '/rentsPage',
+                                  arguments: {
+                                    'customerName':
+                                        state.selectedCustomer!.name,
+                                    'vehicleModel': state.vehicle.model!.name,
+                                  });
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
                             padding: EdgeInsets.symmetric(horizontal: 80),

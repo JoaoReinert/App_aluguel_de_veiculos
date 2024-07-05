@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -222,7 +221,7 @@ class VehicleDataPage extends StatelessWidget {
                           textStyle: const TextStyle(fontSize: 20),
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, '/rentsRegisterPage',
+                          Navigator.pushReplacementNamed(context, '/rentsRegisterPage',
                               arguments: vehicle);
                         },
                         child: const Text(

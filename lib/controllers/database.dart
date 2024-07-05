@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import '../models/brands_model.dart';
 import '../models/customers_model.dart';
 import '../models/managers_model.dart';
+import '../models/rents_model.dart';
 import '../models/state_model.dart';
 import '../models/vehicle_models_model.dart';
 import '../models/vehicles_model.dart';
@@ -22,6 +23,7 @@ Future<Database> getDatabase() async {
       db.execute(ManagerTable.createTable);
       db.execute(VehicleTable.createTable);
       db.execute(EstadoTable.createTable);
+      db.execute(RentsTable.createTable);
       EstadoTable.insertInitialData(db);
     },
     onUpgrade: (db, oldVersion, newVersion) async {
@@ -41,8 +43,11 @@ Future<Database> getDatabase() async {
       if (oldVersion < 6) {
         await EstadoTable.insertInitialData(db);
       }
+      if (oldVersion < 7) {
+        await db.execute(RentsTable.createTable);
+      }
     },
-    version: 6,
+    version: 7,
   );
 }
 
@@ -83,7 +88,7 @@ class CustomerTable {
     map[CustomerTable.phone] = customer.phone;
     map[CustomerTable.cnpj] = customer.cnpj;
     map[CustomerTable.city] = customer.city;
-    map[CustomerTable.state] = customer.state.toString();
+    map[CustomerTable.state] = customer.state.sgEstado;
     map[CustomerTable.companyName] = customer.companyName;
     map[CustomerTable.codeState] = customer.state.cdEstado;
     map[CustomerTable.managerId] = customer.manager?.id;
@@ -94,8 +99,49 @@ class CustomerTable {
 
 ///classe para criancao de metodos insert e delete
 class CustomerController {
+  Future<CustomerModel?> selectId (int customerId) async {
+    final database = await getDatabase();
+    final result = await database.query(
+      CustomerTable.tableName,
+      where: '${CustomerTable.id} = ?',
+      whereArgs: [customerId],
+    );
+
+    if (result.isNotEmpty) {
+      final item = result.first;
+      return CustomerModel(
+        id: item[CustomerTable.id] as int,
+        name: item[CustomerTable.name] as String,
+        phone: item[CustomerTable.phone] as String,
+        cnpj: item[CustomerTable.cnpj] as String,
+        city: item[CustomerTable.city] as String,
+        state: EstadoModel(
+          cdEstado: item[CustomerTable.codeState] as int,
+          nmEstado: item[CustomerTable.state] as String,
+          sgEstado: item[CustomerTable.state] as String,
+        ),
+        companyName: item[CustomerTable.companyName] as String,
+        manager: item[CustomerTable.managerId] != null
+            ? ManagerModel(
+          id: item[CustomerTable.managerId] as int,
+          name: '', // Dados do gerente não estão disponíveis na tabela de clientes
+          cpf: '',
+          phone: '',
+          comission: '',
+          state: EstadoModel(
+            cdEstado: item[CustomerTable.codeState] as int,
+            nmEstado: item[CustomerTable.state] as String,
+            sgEstado: item[CustomerTable.state] as String,
+          ),
+        )
+            : null,
+      );
+    }
+    return null;
+  }
+
   ///funcao para cadastrar apenas clientes dos estados que ja tem gerentes
-  Future<bool> stateVerification(int state) async{
+  Future<bool> stateVerification(int state) async {
     final database = await getDatabase();
     final result = await database.query(
       ManagerTable.tableName,
@@ -107,7 +153,6 @@ class CustomerController {
 
   ///funcao insert para inserir dados no banco
   Future<void> insert(CustomerModel customer) async {
-
     final database = await getDatabase();
 
     final result = await database.query(
@@ -183,17 +228,17 @@ class CustomerController {
         companyName: item[CustomerTable.companyName] as String? ?? '',
         manager: item['managerId'] != null
             ? ManagerModel(
-          id: item['managerId'] as int,
-          name: item['managerName'] as String? ?? '',
-          cpf: item['managerCpf'] as String? ?? '',
-          phone: item['managerPhone'] as String? ?? '',
-          comission: item['managerComission'] as String? ?? '',
-          state: EstadoModel(
-            sgEstado: item[EstadoTable.sgEstado] as String? ?? '',
-            nmEstado: item[EstadoTable.nmEstado] as String? ?? '',
-            cdEstado: item['managerCodeState'] as int,
-          ),
-        )
+                id: item['managerId'] as int,
+                name: item['managerName'] as String? ?? '',
+                cpf: item['managerCpf'] as String? ?? '',
+                phone: item['managerPhone'] as String? ?? '',
+                comission: item['managerComission'] as String? ?? '',
+                state: EstadoModel(
+                  sgEstado: item[EstadoTable.sgEstado] as String? ?? '',
+                  nmEstado: item[EstadoTable.nmEstado] as String? ?? '',
+                  cdEstado: item['managerCodeState'] as int,
+                ),
+              )
             : null,
       ));
     }
@@ -436,6 +481,94 @@ class EstadoController {
         cdEstado: item[EstadoTable.cdEstado],
         nmEstado: item[EstadoTable.nmEstado],
         sgEstado: item[EstadoTable.sgEstado],
+      ));
+    }
+    return list;
+  }
+}
+
+class RentsTable {
+  static const String createTable = '''
+    CREATE TABLE $tableName(
+      $id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      $vehicleId INTEGER NOT NULL,
+      $customerId INTEGER NOT NULL,
+      $initialDate TEXT NOT NULL,
+      $finalDate TEXT NOT NULL,
+      $price TEXT NOT NULL,
+      $totalDays INTEGER NOT NULL,
+      $managerCommission REAL NOT NULL,
+      FOREIGN KEY ($vehicleId) REFERENCES ${VehicleTable.tableName}(${VehicleTable.id}),
+      FOREIGN KEY ($customerId) REFERENCES ${CustomerTable.tableName}(${CustomerTable.id})
+    );
+  ''';
+
+  static const String tableName = 'rent';
+
+  static const String id = 'id';
+  static const String vehicleId = 'vehicle';
+  static const String customerId = 'customerId';
+  static const String initialDate = 'initialDate';
+  static const String finalDate = 'finalDate';
+  static const String price = 'price';
+  static const String totalDays = 'totalDays';
+  static const String managerCommission = 'managerCommission';
+
+  static Map<String, dynamic> toMap(RentsModel rent) {
+    final map = <String, dynamic>{};
+
+    map[RentsTable.id] = rent.id;
+    map[RentsTable.vehicleId] = rent.vehicleId;
+    map[RentsTable.customerId] = rent.customerId;
+    map[RentsTable.initialDate] = rent.initialDate.toIso8601String();
+    map[RentsTable.finalDate] = rent.finalDate.toIso8601String();
+    map[RentsTable.price] = rent.price;
+    map[RentsTable.totalDays] = rent.totalDays;
+    map[RentsTable.managerCommission] = rent.managerCommission;
+
+    return map;
+  }
+}
+
+
+class RentsController {
+
+  Future<void> insert(RentsModel rent) async {
+    final database = await getDatabase();
+    final map = RentsTable.toMap(rent);
+
+    await database.insert(RentsTable.tableName, map);
+    return;
+  }
+
+  Future<void> delete(RentsModel rents) async {
+    final database = await getDatabase();
+
+    await database.delete(
+      RentsTable.tableName,
+      where: '${RentsTable.id} = ?',
+      whereArgs: [rents.id],
+    );
+  }
+
+  Future<List<RentsModel>> select() async {
+    final database = await getDatabase();
+    final List<Map<String, dynamic>> result = await database.query(
+      RentsTable.tableName,
+    );
+
+    var list = <RentsModel>[];
+
+    for (final item in result) {
+      list.add(RentsModel(
+        id: item[RentsTable.id] as int,
+        vehicleId: item[RentsTable.vehicleId] as int,
+        price: item[RentsTable.price] as String,
+        totalDays: item[RentsTable.totalDays] as int,
+        managerCommission: item[RentsTable.managerCommission],
+        customerId: item[RentsTable.customerId] as int,
+        initialDate: DateTime.parse(item[RentsTable.initialDate] as String),
+        finalDate: DateTime.parse(item[RentsTable.finalDate] as String),
       ));
     }
     return list;
