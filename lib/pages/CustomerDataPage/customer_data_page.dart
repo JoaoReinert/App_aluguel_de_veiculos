@@ -172,20 +172,19 @@ class CustomerDataPage extends StatelessWidget {
                    Row(
                     children: [
                       Icon(Icons.work),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
-                      Text(
+                      const Text(
                         'Manager -',
                         style: TextStyle(color: Colors.black, fontSize: 18),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
-                      if(customer.manager!.name != null)
                       Text(
                         customer.manager!.name,
-                        style: TextStyle(color: Colors.black, fontSize: 18),
+                        style: const TextStyle(color: Colors.black, fontSize: 18),
                       ),
                     ],
                   ),

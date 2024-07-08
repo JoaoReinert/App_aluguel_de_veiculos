@@ -99,13 +99,22 @@ class CustomerTable {
 
 ///classe para criancao de metodos insert e delete
 class CustomerController {
-  Future<CustomerModel?> selectId (int customerId) async {
+
+  Future<CustomerModel?> selectId(int customerId) async {
     final database = await getDatabase();
-    final result = await database.query(
-      CustomerTable.tableName,
-      where: '${CustomerTable.id} = ?',
-      whereArgs: [customerId],
-    );
+    final result = await database.rawQuery('''
+    SELECT ${CustomerTable.tableName}.*, 
+           ${ManagerTable.tableName}.${ManagerTable.id} as managerId,
+           ${ManagerTable.tableName}.${ManagerTable.name} as managerName,
+           ${ManagerTable.tableName}.${ManagerTable.cpf} as managerCpf,
+           ${ManagerTable.tableName}.${ManagerTable.phone} as managerPhone,
+           ${ManagerTable.tableName}.${ManagerTable.comission} as managerComission,
+           ${ManagerTable.tableName}.${ManagerTable.codeState} as managerCodeState
+    FROM ${CustomerTable.tableName}
+    LEFT JOIN ${ManagerTable.tableName}
+    ON ${CustomerTable.tableName}.${CustomerTable.managerId} = ${ManagerTable.tableName}.${ManagerTable.id}
+    WHERE ${CustomerTable.tableName}.${CustomerTable.id} = ?
+  ''', [customerId]);
 
     if (result.isNotEmpty) {
       final item = result.first;
@@ -121,15 +130,15 @@ class CustomerController {
           sgEstado: item[CustomerTable.state] as String,
         ),
         companyName: item[CustomerTable.companyName] as String,
-        manager: item[CustomerTable.managerId] != null
+        manager: item['managerId'] != null
             ? ManagerModel(
-          id: item[CustomerTable.managerId] as int,
-          name: '', // Dados do gerente não estão disponíveis na tabela de clientes
-          cpf: '',
-          phone: '',
-          comission: '',
+          id: item['managerId'] as int,
+          name: item['managerName'] as String? ?? '',
+          cpf: item['managerCpf'] as String? ?? '',
+          phone: item['managerPhone'] as String? ?? '',
+          comission: item['managerCommission'] as String? ?? '',
           state: EstadoModel(
-            cdEstado: item[CustomerTable.codeState] as int,
+            cdEstado: item['managerCodeState'] as int,
             nmEstado: item[CustomerTable.state] as String,
             sgEstado: item[CustomerTable.state] as String,
           ),
@@ -139,6 +148,7 @@ class CustomerController {
     }
     return null;
   }
+
 
   ///funcao para cadastrar apenas clientes dos estados que ja tem gerentes
   Future<bool> stateVerification(int state) async {
@@ -368,6 +378,29 @@ class VehicleTable {
 }
 
 class VehicleController {
+
+  Future<VehiclesModels?> selectId(int vehicleId) async {
+    final database = await getDatabase();
+    final result = await database.query(
+      VehicleTable.tableName,
+      where: '${VehicleTable.id} = ?',
+      whereArgs: [vehicleId],
+    );
+    if (result.isNotEmpty) {
+      final item = result.first;
+      return VehiclesModels(
+        id: item[VehicleTable.id] as int,
+        type: item[VehicleTable.type] as String,
+        brand: BrandsModel(name: item[VehicleTable.brand] as String),
+        model: ModelsModel(name: item[VehicleTable.model] as String),
+        plate: item[VehicleTable.plate] as String,
+        year: YearModel(name: item[VehicleTable.year] as String),
+        dailyRate: item[VehicleTable.dailyRate] as String,
+      );
+    }
+    return null;
+  }
+
   Future<void> insert(VehiclesModels vehicle) async {
     final database = await getDatabase();
     final map = VehicleTable.toMap(vehicle);
@@ -530,9 +563,7 @@ class RentsTable {
   }
 }
 
-
 class RentsController {
-
   Future<void> insert(RentsModel rent) async {
     final database = await getDatabase();
     final map = RentsTable.toMap(rent);

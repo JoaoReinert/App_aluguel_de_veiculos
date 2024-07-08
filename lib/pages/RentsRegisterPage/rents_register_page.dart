@@ -10,6 +10,12 @@ import '../../models/rents_model.dart';
 import '../../models/vehicles_model.dart';
 import '../../theme.dart';
 
+extension DateExtension on DateTime {
+  String dateFormater() {
+    return "${this.day.toString().padLeft(2, '0')}/${this.month.toString().padLeft(2, '0')}/${this.year}";
+  }
+}
+
 class RentsRegisterState extends ChangeNotifier {
   RentsRegisterState(this.vehicle) {
     load();
@@ -51,8 +57,8 @@ class RentsRegisterState extends ChangeNotifier {
         totalDays: totalDays,
         managerCommission: managerComission,
         customerId: selectedCustomer!.id!,
-        initialDate: DateTime.parse(initialDateController.text),
-        finalDate: DateTime.parse(finalDateController.text));
+        initialDate: date(initialDateController.text),
+        finalDate: date(finalDateController.text));
 
     await controllerRent.insert(rent);
     await load();
@@ -65,6 +71,12 @@ class RentsRegisterState extends ChangeNotifier {
     finalDateController.clear();
   }
 
+  DateTime date(String date) {
+    final barrier = date.split('/');
+    return DateTime(
+        int.parse(barrier[2]), int.parse(barrier[1]), int.parse(barrier[0]));
+  }
+
   Future<void> selectInitialDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
@@ -73,7 +85,7 @@ class RentsRegisterState extends ChangeNotifier {
       lastDate: DateTime(2026),
     );
     if (picked != null) {
-      initialDateController.text = picked.toString().split(' ')[0];
+      initialDateController.text = picked.dateFormater();
     }
     calculateDays();
     calculatePrice();
@@ -88,7 +100,7 @@ class RentsRegisterState extends ChangeNotifier {
       lastDate: DateTime(2026),
     );
     if (picked != null) {
-      finalDateController.text = picked.toString().split(' ')[0];
+      finalDateController.text = picked.dateFormater();
     }
     calculateDays();
     calculatePrice();
@@ -100,8 +112,10 @@ class RentsRegisterState extends ChangeNotifier {
     if (initialDateController.text.isNotEmpty &&
         finalDateController.text.isNotEmpty) {
       //convertendo as stringds para datetime
-      DateTime initialDate = DateTime.parse(initialDateController.text);
-      DateTime finalDate = DateTime.parse(finalDateController.text);
+      DateTime initialDate = DateTime.parse(
+          initialDateController.text.split('/').reversed.join('-'));
+      DateTime finalDate = DateTime.parse(
+          finalDateController.text.split('/').reversed.join('-'));
       Duration totalNumbersOfDay = finalDate.difference(initialDate);
       totalDays = totalNumbersOfDay.inDays;
 

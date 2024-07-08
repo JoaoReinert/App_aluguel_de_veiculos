@@ -1,6 +1,6 @@
 class RentsModel {
   late int? id;
-  int? vehicleId;
+  int vehicleId;
   final String price;
   final int totalDays;
   final double managerCommission;
