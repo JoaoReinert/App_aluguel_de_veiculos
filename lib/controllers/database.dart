@@ -104,6 +104,9 @@ class CustomerController {
     final database = await getDatabase();
     final result = await database.rawQuery('''
     SELECT ${CustomerTable.tableName}.*, 
+             ${EstadoTable.tableName}.${EstadoTable.cdEstado} as stateCdEstado,
+             ${EstadoTable.tableName}.${EstadoTable.sgEstado} as stateSgEstado,
+             ${EstadoTable.tableName}.${EstadoTable.nmEstado} as stateNmEstado,
            ${ManagerTable.tableName}.${ManagerTable.id} as managerId,
            ${ManagerTable.tableName}.${ManagerTable.name} as managerName,
            ${ManagerTable.tableName}.${ManagerTable.cpf} as managerCpf,
@@ -113,6 +116,8 @@ class CustomerController {
     FROM ${CustomerTable.tableName}
     LEFT JOIN ${ManagerTable.tableName}
     ON ${CustomerTable.tableName}.${CustomerTable.managerId} = ${ManagerTable.tableName}.${ManagerTable.id}
+    LEFT JOIN ${EstadoTable.tableName}
+    ON ${CustomerTable.tableName}.${CustomerTable.codeState} = ${EstadoTable.tableName}.${EstadoTable.cdEstado}
     WHERE ${CustomerTable.tableName}.${CustomerTable.id} = ?
   ''', [customerId]);
 
@@ -125,9 +130,9 @@ class CustomerController {
         cnpj: item[CustomerTable.cnpj] as String,
         city: item[CustomerTable.city] as String,
         state: EstadoModel(
-          cdEstado: item[CustomerTable.codeState] as int,
-          nmEstado: item[CustomerTable.state] as String,
-          sgEstado: item[CustomerTable.state] as String,
+          cdEstado: item['stateCdEstado'] as int,
+          nmEstado: item['stateNmEstado'] as String? ?? '',
+          sgEstado: item['stateSgEstado'] as String? ?? '',
         ),
         companyName: item[CustomerTable.companyName] as String,
         manager: item['managerId'] != null
@@ -136,11 +141,11 @@ class CustomerController {
           name: item['managerName'] as String? ?? '',
           cpf: item['managerCpf'] as String? ?? '',
           phone: item['managerPhone'] as String? ?? '',
-          comission: item['managerCommission'] as String? ?? '',
+          comission: item['managerComission'] as String? ?? '',
           state: EstadoModel(
             cdEstado: item['managerCodeState'] as int,
-            nmEstado: item[CustomerTable.state] as String,
-            sgEstado: item[CustomerTable.state] as String,
+            nmEstado: item['stateNmEstado'] as String? ?? '',
+            sgEstado: item['stateSgEstado'] as String? ?? '',
           ),
         )
             : null,
@@ -149,8 +154,16 @@ class CustomerController {
     return null;
   }
 
+  Future<bool> registeredStatesVerification(int stateCode) async {
+    final database = await getDatabase();
+    final result = await database.rawQuery(
+      'SELECT * FROM ${CustomerTable.tableName} WHERE ${CustomerTable.codeState} = ?',
+      [stateCode],
+    );
+    return result.isNotEmpty;
+  }
 
-  ///funcao para cadastrar apenas clientes dos estados que ja tem gerentes
+//funcao para cadastrar apenas clientes dos estados que ja tem gerentes
   Future<bool> stateVerification(int state) async {
     final database = await getDatabase();
     final result = await database.query(

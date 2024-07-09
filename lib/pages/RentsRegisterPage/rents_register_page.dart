@@ -350,7 +350,7 @@ class RentsRegisterPage extends StatelessWidget {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
-                            padding: EdgeInsets.symmetric(horizontal: 80),
+                            padding: const EdgeInsets.symmetric(horizontal: 80),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

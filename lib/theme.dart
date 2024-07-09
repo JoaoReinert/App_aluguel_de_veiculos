@@ -24,8 +24,8 @@ ThemeData theme(BuildContext context) {
     bottomNavigationBarTheme: theme.bottomNavigationBarTheme.copyWith(
       backgroundColor: Colors.blue,
       selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white60,
-      unselectedLabelStyle: TextStyle(
+      unselectedItemColor: Colors.white70,
+      unselectedLabelStyle: const TextStyle(
         color: Colors.grey,
       ),
     ),

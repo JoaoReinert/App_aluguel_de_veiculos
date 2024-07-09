@@ -5,6 +5,7 @@ import '../../controllers/database.dart';
 import '../../models/customers_model.dart';
 import '../../models/rents_model.dart';
 import '../../models/vehicles_model.dart';
+import '../../utils/standard_delete_dialog.dart';
 import '../RentsRegisterPage/rents_register_page.dart';
 
 class RentsListPageState extends ChangeNotifier {
@@ -97,21 +98,35 @@ class RentsPage extends StatelessWidget {
                           elevation: 5,
                           shadowColor: Colors.black,
                           child: ExpansionTile(
-                            leading: Icon(
+                            leading: const Icon(
                               Icons.car_rental,
                               color: Colors.blue,
                             ),
                             title: Text(
                               '${vehicle?.model?.name}',
                               maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                            subtitle: Text(
-                              '${customer?.name}',
-                              style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  customer!.name,
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Text(
+                                  'Initial Date: ${rent.initialDate.dateFormater()}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  'Final Date: ${rent.finalDate.dateFormater()}',
+                                  style: const TextStyle(fontSize: 14),
+                                )
+                              ],
                             ),
                             children: [
                               Padding(
@@ -142,7 +157,7 @@ class RentsPage extends StatelessWidget {
                                     ),
                                     Row(
                                       children: [
-                                        Icon(Icons.phone),
+                                        const Icon(Icons.phone),
                                         const SizedBox(
                                           width: 10,
                                         ),
@@ -156,12 +171,12 @@ class RentsPage extends StatelessWidget {
                                     ),
                                     Row(
                                       children: [
-                                        Icon(Icons.map),
+                                        const Icon(Icons.map),
                                         const SizedBox(
                                           width: 10,
                                         ),
                                         Text(
-                                          '${customer?.state.sgEstado}',
+                                          customer.state.sgEstado,
                                           style: const TextStyle(
                                               color: Colors.black,
                                               fontSize: 18),
@@ -264,7 +279,7 @@ class RentsPage extends StatelessWidget {
                                           width: 10,
                                         ),
                                         Text(
-                                          'Final Date: ${rent.finalDate.dateFormater()} ',
+                                          'Final Date: ${rent.finalDate.dateFormater()}',
                                           style: const TextStyle(
                                               color: Colors.black,
                                               fontSize: 18),
@@ -300,8 +315,8 @@ class RentsPage extends StatelessWidget {
                                       ],
                                     ),
                                     const Divider(),
-                                     Text(
-                                      'Manager ${customer!.manager!.name}',
+                                    Text(
+                                      'Manager ${customer.manager!.name}',
                                       style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -309,7 +324,8 @@ class RentsPage extends StatelessWidget {
                                     ),
                                     Row(
                                       children: [
-                                        const Icon(Icons.monetization_on_outlined),
+                                        const Icon(
+                                            Icons.monetization_on_outlined),
                                         const SizedBox(
                                           width: 10,
                                         ),
@@ -321,6 +337,40 @@ class RentsPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
+                                    Divider(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {},
+                                          child: const Text(
+                                            'VIEW PDF DOCUMENT',
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  StandardDeleteDialog(
+                                                name:
+                                                    'rent for ${customer.name}',
+                                                function: () async {
+                                                  await state.delete(rent);
+                                                },
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            'EXCLUDE RENT',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 ),
                               ),

@@ -17,7 +17,7 @@ class StandardDeleteDialog extends StatelessWidget {
         style: TextStyle(color: Colors.red),
       ),
       content: Text(
-        'Tem certeza que deseja excluir o $name?',
+        'Are you sure you want to delete the $name?',
         style: const TextStyle(color: Colors.black, fontSize: 15),
       ),
       actions: [

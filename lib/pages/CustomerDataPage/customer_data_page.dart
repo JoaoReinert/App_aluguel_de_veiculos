@@ -155,15 +155,24 @@ class CustomerDataPage extends StatelessWidget {
                       const SizedBox(
                         width: 10,
                       ),
+                      if(customer.companyName.isNotEmpty)
                       Expanded(
                         child: Text(
                           customer.companyName,
                           style:
                               const TextStyle(color: Colors.black, fontSize: 18),
                               softWrap: true,
-                              
                         ),
                       ),
+                      if(customer.companyName.isEmpty)
+                        const Expanded(
+                          child: Text(
+                            'Name not found',
+                            style:
+                            TextStyle(color: Colors.black, fontSize: 18),
+                            softWrap: true,
+                          ),
+                        ),
                     ],
                   ),
                   const SizedBox(

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/database.dart';
-import '../../enum_states.dart';
 import '../../models/managers_model.dart';
 import '../../models/state_model.dart';
 import '../../theme.dart';
@@ -23,6 +23,7 @@ class FunctionManager extends ChangeNotifier {
   /// Controlador para operações relacionadas aos clientes
   final controller = ManagerController();
   final controllerEstado = EstadoController();
+  final controllerCustomer = CustomerController();
 
   final _controllerName = TextEditingController();
   final _controllerCPF = TextEditingController();
@@ -62,23 +63,24 @@ class FunctionManager extends ChangeNotifier {
     final listEstado = await controllerEstado.select();
     _listManager.clear();
     _listManager.addAll(list);
-    _listEstado..clear()..addAll(listEstado);
+    _listEstado
+      ..clear()
+      ..addAll(listEstado);
     notifyListeners();
   }
 
   /// Função assíncrona para inserir um novo gerente
   Future<void> insert() async {
-
-    if(selectItem == null) {
+    if (selectItem == null) {
       print('erroooooooo');
     }
 
     final managers = ManagerModel(
-        name: controllerName.text,
-        cpf: controllerCPF.text,
-        state: selectItem!,
-        phone: controllerPhone.text,
-        comission: controllerComission.text,
+      name: controllerName.text,
+      cpf: controllerCPF.text,
+      state: selectItem!,
+      phone: controllerPhone.text,
+      comission: controllerComission.text,
     );
 
     await controller.insert(managers);
@@ -93,7 +95,6 @@ class FunctionManager extends ChangeNotifier {
     notifyListeners();
   }
 
-
   ///funcao de delete para deletar o gerente do banco de dados
   Future<void> delete(ManagerModel manager) async {
     await controller.delete(manager);
@@ -105,6 +106,47 @@ class FunctionManager extends ChangeNotifier {
   void updateState(EstadoModel newValue) {
     _selectItem = newValue;
     notifyListeners();
+  }
+
+  MaskTextInputFormatter formatterPhone = MaskTextInputFormatter(
+      mask: '(##)#####-####', type: MaskAutoCompletionType.eager);
+
+  MaskTextInputFormatter formatterCpf = MaskTextInputFormatter(
+      mask: '###.###.###-##', type: MaskAutoCompletionType.eager);
+
+  Future<void> verificationDeleteManager(
+      BuildContext context, ManagerModel manager) async {
+    final function = await controllerCustomer
+        .registeredStatesVerification(manager.state.cdEstado);
+    if (function) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('It is not possible to delete this manager'),
+            content: const Text('This manager has registered clients'),
+            actions: [
+              TextButton(
+                child: const Text('Exit'),
+                onPressed: () {
+                  Navigator.of(context).pop(); // Dismiss alert dialog
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => StandardDeleteDialog(
+          name: manager.name,
+          function: () async {
+            await delete(manager);
+          },
+        ),
+      );
+    }
   }
 }
 
@@ -127,7 +169,10 @@ class ManagersRegisterPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: StandardFormButton(
-                    icon: const Icon(Icons.work, color: Colors.blue,),
+                    icon: const Icon(
+                      Icons.work,
+                      color: Colors.blue,
+                    ),
                     label: 'Registration +',
                     onpressed: () async {
                       await showDialog(
@@ -181,6 +226,7 @@ class ManagersRegisterPage extends StatelessWidget {
                               ),
                               TextFormField(
                                 controller: state.controllerCPF,
+                                inputFormatters: [state.formatterCpf],
                                 keyboardType: TextInputType.number,
                                 style: const TextStyle(
                                     fontSize: 15, color: Colors.black),
@@ -201,9 +247,7 @@ class ManagersRegisterPage extends StatelessWidget {
                                   (state) {
                                     return DropdownMenuItem(
                                       value: state,
-                                      child: Text(state
-                                          .sgEstado
-                                      ),
+                                      child: Text(state.sgEstado),
                                     );
                                   },
                                 ).toList(),
@@ -215,6 +259,7 @@ class ManagersRegisterPage extends StatelessWidget {
                               ),
                               TextFormField(
                                 controller: state.controllerPhone,
+                                inputFormatters: [state.formatterPhone],
                                 keyboardType: TextInputType.phone,
                                 style: const TextStyle(
                                     fontSize: 15, color: Colors.black),
@@ -254,8 +299,10 @@ class ManagersRegisterPage extends StatelessWidget {
                 builder: (context) {
                   if (state.listManager.isEmpty) {
                     return const Center(
-                      child: Text('No managers registered',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),),
+                      child: Text(
+                        'No managers registered',
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
                     );
                   } else {
                     return ListView.builder(
@@ -291,18 +338,11 @@ class ManagersRegisterPage extends StatelessWidget {
                                 children: [
                                   IconButton(
                                     onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            StandardDeleteDialog(
-                                              name: manager.name,
-                                              function: () async {
-                                                await state.delete(manager);
-                                              },
-                                            ),
-                                      );
+                                      state.verificationDeleteManager(
+                                          context, manager);
                                     },
-                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
                                   ),
                                 ],
                               ),
@@ -312,7 +352,8 @@ class ManagersRegisterPage extends StatelessWidget {
                       },
                     );
                   }
-                },),
+                },
+              ),
             ),
           );
         },

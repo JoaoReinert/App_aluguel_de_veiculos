@@ -164,6 +164,9 @@ class FunctionsCustomer extends ChangeNotifier {
 
   MaskTextInputFormatter formatterCNPJ = MaskTextInputFormatter(
       mask: '##.###.###/####-##', type: MaskAutoCompletionType.eager);
+
+  MaskTextInputFormatter formatterPhone = MaskTextInputFormatter(
+      mask: '(##)#####-####', type: MaskAutoCompletionType.eager);
 }
 
 ///criacao da tela de resgistro do cliente
@@ -268,6 +271,7 @@ class CustomerRegistrationPage extends StatelessWidget {
                               ),
                               TextFormField(
                                 controller: state.controllerPhone,
+                                inputFormatters: [state.formatterPhone],
                                 keyboardType: TextInputType.phone,
                                 style: const TextStyle(
                                     fontSize: 15, color: Colors.black),
