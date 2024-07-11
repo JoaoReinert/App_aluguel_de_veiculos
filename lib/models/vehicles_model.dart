@@ -18,7 +18,7 @@ class VehiclesModels {
   ///ano do veiculo
   final YearModel? year;
   ///diaria do veiculo
-  final String dailyRate;
+  String dailyRate;
 
   ///instacia do modelo para ser obrigatorio a passagem de dados
   VehiclesModels({

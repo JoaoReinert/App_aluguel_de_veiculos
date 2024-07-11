@@ -6,13 +6,13 @@ class StandardDialog extends StatelessWidget {
     required this.title,
     this.actions,
     required this.items,
-    required this.formKey
+     this.formKey
   });
 
   final String title;
   final Widget? actions;
   final List<Widget> items;
-  final GlobalKey<FormState> formKey;
+  final GlobalKey<FormState>? formKey;
 
   @override
   Widget build(BuildContext context) {

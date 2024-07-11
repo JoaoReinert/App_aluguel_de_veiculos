@@ -6,13 +6,13 @@ class ManagerModel {
   ///id para identificar qual o gerente do banco
   late int? id;
   ///nome do gerente
-  final String name;
+  String name;
   ///cpf do gerente
-  final String cpf;
+  String cpf;
   ///telefone do gerente
-  final String phone;
+   String phone;
   ///comissao do gerente
-  final String comission;
+   String comission;
   ///estado
   final EstadoModel state;
 

@@ -7,16 +7,16 @@ class CustomerModel {
   late int? id;
 
   ///nome do cliente
-  final String name;
+  String name;
 
   ///telefone do cliente
-  final String phone;
+  String phone;
 
   ///cnpj do cliente
   final String cnpj;
 
   ///cidade do cliente
-  final String city;
+  String city;
 
   ///nome da empresa do cliente
   final String companyName;

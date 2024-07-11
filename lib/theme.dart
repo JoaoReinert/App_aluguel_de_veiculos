@@ -36,6 +36,35 @@ ThemeData theme(BuildContext context) {
       headerForegroundColor: Colors.white,
       headerBackgroundColor: Colors.blue,
     ),
+
+  );
+}
+
+InputDecoration decorationSearch(String text) {
+  return InputDecoration(
+    hintText: text,
+    hintStyle: const TextStyle(fontSize: 18, color: Colors.white),
+    filled: true,
+    fillColor: Colors.grey[500],
+    border: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.all(
+        Radius.circular(40),
+      ),
+    ),
+    enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.all(
+        Radius.circular(40),
+      ),
+    ),
+    focusedBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.all(
+        Radius.circular(40),
+      ),
+    ),
+    prefixIcon: const Icon(Icons.search, color: Colors.white),
   );
 }
 

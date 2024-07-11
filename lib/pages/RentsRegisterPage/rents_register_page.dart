@@ -17,6 +17,7 @@ extension DateExtension on DateTime {
 }
 
 class RentsRegisterState extends ChangeNotifier {
+
   RentsRegisterState(this.vehicle) {
     load();
   }
@@ -81,11 +82,12 @@ class RentsRegisterState extends ChangeNotifier {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2024),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2026),
     );
     if (picked != null) {
       initialDateController.text = picked.dateFormater();
+      finalDateController.clear();
     }
     calculateDays();
     calculatePrice();
@@ -95,8 +97,8 @@ class RentsRegisterState extends ChangeNotifier {
   Future<void> selectFinalDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2024),
+      initialDate: initialDateController.text.isEmpty ? DateTime.now() : date(initialDateController.text),
+      firstDate: initialDateController.text.isEmpty ? DateTime.now() : date(initialDateController.text),
       lastDate: DateTime(2026),
     );
     if (picked != null) {
@@ -167,7 +169,7 @@ class RentsRegisterPage extends StatelessWidget {
               backgroundColor: Colors.blueAccent,
               title: const Text('Vehicle Registration'),
               centerTitle: true,
-              automaticallyImplyLeading: false,
+              automaticallyImplyLeading: true,
               toolbarHeight: 60,
             ),
             backgroundColor: Colors.blue,
@@ -341,11 +343,7 @@ class RentsRegisterPage extends StatelessWidget {
                               state.insert();
                               Navigator.pushReplacementNamed(
                                   context, '/rentsPage',
-                                  arguments: {
-                                    'customerName':
-                                        state.selectedCustomer!.name,
-                                    'vehicleModel': state.vehicle.model!.name,
-                                  });
+                                  );
                             }
                           },
                           style: ElevatedButton.styleFrom(

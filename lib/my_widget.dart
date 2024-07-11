@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projeto_final_lince/pages/VehicleListPage/vehicle_list_page.dart';
 import 'models/customers_model.dart';
 import 'models/managers_model.dart';
+import 'models/rents_model.dart';
 import 'models/vehicles_model.dart';
 import 'pages/CustomerDataPage/customer_data_page.dart';
 import 'pages/CustomerRegistrationPage/customer_registration_page.dart';

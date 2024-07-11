@@ -27,6 +27,7 @@ class FunctionsCustomer extends ChangeNotifier {
   /// Controlador para operações relacionadas aos clientes
   final controller = CustomerController();
   final controllerEstado = EstadoController();
+  final controllerRent = RentsController();
 
   final _controllerName = TextEditingController();
   final _controllerPhone = TextEditingController();
@@ -36,6 +37,8 @@ class FunctionsCustomer extends ChangeNotifier {
   final _listCustomer = <CustomerModel>[];
   final _listStates = <EstadoModel>[];
   String? stateError;
+  final controllerResearch = TextEditingController();
+  List<CustomerModel> _listCustomerFilter = <CustomerModel>[];
 
   ///variavel para o nome da empresa do cliente
   String companyName = '';
@@ -64,7 +67,7 @@ class FunctionsCustomer extends ChangeNotifier {
   EstadoModel? get selectItem => _selectItem;
 
   /// Getter para a lista de modelos de cliente
-  List<CustomerModel> get listCustomer => _listCustomer;
+  List<CustomerModel> get listCustomer => _listCustomerFilter;
 
   ///Getter para a lista de modelos de estado
   List<EstadoModel> get listStates => _listStates;
@@ -77,18 +80,20 @@ class FunctionsCustomer extends ChangeNotifier {
     _listCustomer.addAll(list);
     _listStates.clear();
     _listStates.addAll(listState);
+    _listCustomerFilter = _listCustomer;
     notifyListeners();
   }
+
   ///validacao do estado
   Future<bool> stateValidator() async {
-
     if (selectItem == null) {
       stateError = 'Enter the customer state';
       notifyListeners();
       return false;
     }
 
-    bool stateManager = await controller.stateVerification(selectItem!.cdEstado);
+    bool stateManager =
+        await controller.stateVerification(selectItem!.cdEstado);
 
     if (!stateManager) {
       stateError = 'State without a manager';
@@ -103,7 +108,6 @@ class FunctionsCustomer extends ChangeNotifier {
 
   /// Função assíncrona para inserir um novo cliente
   Future<void> insert() async {
-
     bool stateValidate = await stateValidator();
     if (!stateValidate) {
       return;
@@ -167,6 +171,56 @@ class FunctionsCustomer extends ChangeNotifier {
 
   MaskTextInputFormatter formatterPhone = MaskTextInputFormatter(
       mask: '(##)#####-####', type: MaskAutoCompletionType.eager);
+
+  Future<void> verificationDeleteCustomer(
+      BuildContext context, CustomerModel customer) async {
+    final function =
+        await controllerRent.rentalCustomerVerification(customer.id);
+    if (function) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('It is not possible to delete this customer'),
+            content: const Text('This customer has a registered rental'),
+            actions: [
+              TextButton(
+                child: const Text(
+                  'Exit',
+                  style: TextStyle(color: Colors.blue),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => StandardDeleteDialog(
+          name: customer.name,
+          function: () async {
+            await delete(customer);
+          },
+        ),
+      );
+    }
+  }
+
+  void filterCustomer(String nameCustomer) {
+    if (nameCustomer.isEmpty) {
+      _listCustomerFilter = _listCustomer;
+    } else {
+      _listCustomerFilter = _listCustomer
+          .where((customer) =>
+              customer.name.toLowerCase().contains(nameCustomer.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
+  }
 }
 
 ///criacao da tela de resgistro do cliente
@@ -216,9 +270,11 @@ class CustomerRegistrationPage extends StatelessWidget {
                                   onPressed: () async {
                                     state.cnpjverified = false;
                                     state.error = false;
-                                    bool validateState = await state.stateValidator();
+                                    bool validateState =
+                                        await state.stateValidator();
                                     if (state.customerKey.currentState!
-                                        .validate() && validateState) {
+                                            .validate() &&
+                                        validateState) {
                                       await state.checkCnpj();
                                       if (state.cnpjverified && !state.error) {
                                         await state.insert();
@@ -337,73 +393,83 @@ class CustomerRegistrationPage extends StatelessWidget {
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Builder(
-                builder: (context) {
-                  if (state.listCustomer.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'No customers registered.',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    );
-                  } else {
-                    return ListView.builder(
-                      itemCount: state.listCustomer.length,
-                      itemBuilder: (context, index) {
-                        final customer = state.listCustomer[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: Card(
-                            shape: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
+              child: Column(
+                children: [
+                  TextField(
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Colors.white),
+                    controller: state.controllerResearch,
+                    onChanged: state.filterCustomer,
+                    decoration: decorationSearch(
+                      'Search Customers',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        if (state.listCustomer.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              'No customers registered.',
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.grey),
                             ),
-                            color: Colors.grey[350],
-                            elevation: 3,
-                            shadowColor: Colors.black,
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, '/customerDataPage',
-                                    arguments: customer);
-                              },
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    color: Colors.white, width: 1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              title: Text(
-                                customer.name,
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              subtitle: Text('CNPJ: ${customer.cnpj}'),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            StandardDeleteDialog(
-                                          name: customer.name,
-                                          function: () async {
-                                            await state.delete(customer);
-                                          },
-                                        ),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
+                          );
+                        } else {
+                          return ListView.builder(
+                            itemCount: state.listCustomer.length,
+                            itemBuilder: (context, index) {
+                              final customer = state.listCustomer[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: Card(
+                                  shape: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
+                                  color: Colors.grey[350],
+                                  elevation: 3,
+                                  shadowColor: Colors.black,
+                                  child: ListTile(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, '/customerDataPage',
+                                          arguments: customer);
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                          color: Colors.white, width: 1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    title: Text(
+                                      customer.name,
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                    subtitle: Text('CNPJ: ${customer.cnpj}'),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () async {
+                                            await state
+                                                .verificationDeleteCustomer(
+                                                    context, customer);
+                                          },
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
-                    );
-                  }
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
           );

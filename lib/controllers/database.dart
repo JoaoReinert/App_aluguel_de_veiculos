@@ -1,3 +1,4 @@
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/brands_model.dart';
@@ -99,7 +100,6 @@ class CustomerTable {
 
 ///classe para criancao de metodos insert e delete
 class CustomerController {
-
   Future<CustomerModel?> selectId(int customerId) async {
     final database = await getDatabase();
     final result = await database.rawQuery('''
@@ -137,17 +137,17 @@ class CustomerController {
         companyName: item[CustomerTable.companyName] as String,
         manager: item['managerId'] != null
             ? ManagerModel(
-          id: item['managerId'] as int,
-          name: item['managerName'] as String? ?? '',
-          cpf: item['managerCpf'] as String? ?? '',
-          phone: item['managerPhone'] as String? ?? '',
-          comission: item['managerComission'] as String? ?? '',
-          state: EstadoModel(
-            cdEstado: item['managerCodeState'] as int,
-            nmEstado: item['stateNmEstado'] as String? ?? '',
-            sgEstado: item['stateSgEstado'] as String? ?? '',
-          ),
-        )
+                id: item['managerId'] as int,
+                name: item['managerName'] as String? ?? '',
+                cpf: item['managerCpf'] as String? ?? '',
+                phone: item['managerPhone'] as String? ?? '',
+                comission: item['managerComission'] as String? ?? '',
+                state: EstadoModel(
+                  cdEstado: item['managerCodeState'] as int,
+                  nmEstado: item['stateNmEstado'] as String? ?? '',
+                  sgEstado: item['stateSgEstado'] as String? ?? '',
+                ),
+              )
             : null,
       );
     }
@@ -268,6 +268,37 @@ class CustomerController {
 
     return list;
   }
+
+  Future<void> updateName (int customerId, String newName) async {
+    final database = await getDatabase();
+    await database.update(
+        CustomerTable.tableName,
+        {CustomerTable.name: newName},
+      where: '${CustomerTable.id} = ?',
+      whereArgs: [customerId],
+        );
+  }
+
+  Future<void> updatePhone (int customerId, String newPhone) async {
+    final database = await getDatabase();
+    await database.update(
+      CustomerTable.tableName,
+      {CustomerTable.phone: newPhone},
+      where: '${CustomerTable.id} = ?',
+      whereArgs: [customerId],
+    );
+  }
+
+  Future<void> updateCity (int customerId, String newCity) async {
+    final database = await getDatabase();
+    await database.update(
+      CustomerTable.tableName,
+      {CustomerTable.city: newCity},
+      where: '${CustomerTable.id} = ?',
+      whereArgs: [customerId],
+    );
+  }
+
 }
 
 class ManagerTable {
@@ -350,6 +381,46 @@ class ManagerController {
     }
     return list;
   }
+
+  Future<void> updateName(int managerId, String newName) async {
+    final database = await getDatabase();
+    await database.update(
+      ManagerTable.tableName,
+      {ManagerTable.name: newName},
+      where: '${ManagerTable.id} = ?',
+      whereArgs: [managerId],
+    );
+  }
+
+  Future<void> updateCPF(int managerId, String newCPF) async {
+    final database = await getDatabase();
+    await database.update(
+      ManagerTable.tableName,
+      {ManagerTable.cpf: newCPF},
+      where: '${ManagerTable.id} = ?',
+      whereArgs: [managerId],
+    );
+  }
+
+  Future<void> updatePhone(int managerId, String newPhone) async {
+    final database = await getDatabase();
+    await database.update(
+      ManagerTable.tableName,
+      {ManagerTable.phone: newPhone},
+      where: '${ManagerTable.id} = ?',
+      whereArgs: [managerId],
+    );
+  }
+
+  Future<void> updateCommission(int managerId, String newCommission) async {
+    final database = await getDatabase();
+    await database.update(
+      ManagerTable.tableName,
+      {ManagerTable.comission: newCommission},
+      where: '${ManagerTable.id} = ?',
+      whereArgs: [managerId],
+    );
+  }
 }
 
 class VehicleTable {
@@ -391,7 +462,6 @@ class VehicleTable {
 }
 
 class VehicleController {
-
   Future<VehiclesModels?> selectId(int vehicleId) async {
     final database = await getDatabase();
     final result = await database.query(
@@ -452,6 +522,16 @@ class VehicleController {
       ));
     }
     return list;
+  }
+
+  Future<void> updatePrice(int vehicleId, String newPrice) async {
+    final database = await getDatabase();
+    await database.update(
+      VehicleTable.tableName,
+      {VehicleTable.dailyRate: newPrice},
+      where: '${VehicleTable.id} = ? ',
+      whereArgs: [vehicleId],
+    );
   }
 }
 
@@ -577,6 +657,11 @@ class RentsTable {
 }
 
 class RentsController {
+  Future<void> deleteTable() async {
+    final database = await getDatabase();
+    await database.delete(RentsTable.tableName);
+  }
+
   Future<void> insert(RentsModel rent) async {
     final database = await getDatabase();
     final map = RentsTable.toMap(rent);
@@ -616,5 +701,23 @@ class RentsController {
       ));
     }
     return list;
+  }
+
+  Future<bool> rentalCustomerVerification (int? customerId) async {
+    final database = await getDatabase();
+    final result = await database.rawQuery(
+      'SELECT * FROM ${RentsTable.tableName} WHERE ${RentsTable.customerId} = ?',
+      [customerId],
+    );
+    return result.isNotEmpty;
+  }
+
+  Future<bool> rentalVehicleVerification (int? vehicleId) async {
+    final database = await getDatabase();
+    final result = await database.rawQuery(
+      'SELECT * FROM ${RentsTable.tableName} WHERE ${RentsTable.vehicleId} = ?',
+      [vehicleId],
+    );
+    return result.isNotEmpty;
   }
 }

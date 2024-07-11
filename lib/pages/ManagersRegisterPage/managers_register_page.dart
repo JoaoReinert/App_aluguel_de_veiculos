@@ -33,6 +33,8 @@ class FunctionManager extends ChangeNotifier {
   EstadoModel? _selectItem;
   final _listManager = <ManagerModel>[];
   final _listEstado = <EstadoModel>[];
+  final controllerResearch = TextEditingController();
+  List<ManagerModel> _listManagerFilter = <ManagerModel>[];
 
   /// Getter para o controlador de texto do campo nome
   TextEditingController get controllerName => _controllerName;
@@ -53,7 +55,7 @@ class FunctionManager extends ChangeNotifier {
   EstadoModel? get selectItem => _selectItem;
 
   /// Getter para a lista de modelos de cliente
-  List<ManagerModel> get listManager => _listManager;
+  List<ManagerModel> get listManager => _listManagerFilter;
 
   List<EstadoModel> get listEstado => _listEstado;
 
@@ -66,6 +68,7 @@ class FunctionManager extends ChangeNotifier {
     _listEstado
       ..clear()
       ..addAll(listEstado);
+    _listManagerFilter = _listManager;
     notifyListeners();
   }
 
@@ -114,8 +117,8 @@ class FunctionManager extends ChangeNotifier {
   MaskTextInputFormatter formatterCpf = MaskTextInputFormatter(
       mask: '###.###.###-##', type: MaskAutoCompletionType.eager);
 
-  Future<void> verificationDeleteManager(
-      BuildContext context, ManagerModel manager) async {
+  Future<void> verificationDeleteManager(BuildContext context,
+      ManagerModel manager) async {
     final function = await controllerCustomer
         .registeredStatesVerification(manager.state.cdEstado);
     if (function) {
@@ -127,9 +130,10 @@ class FunctionManager extends ChangeNotifier {
             content: const Text('This manager has registered clients'),
             actions: [
               TextButton(
-                child: const Text('Exit'),
+                child: const Text(
+                  'Exit', style: TextStyle(color: Colors.blue),),
                 onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss alert dialog
+                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -139,14 +143,26 @@ class FunctionManager extends ChangeNotifier {
     } else {
       showDialog(
         context: context,
-        builder: (context) => StandardDeleteDialog(
-          name: manager.name,
-          function: () async {
-            await delete(manager);
-          },
-        ),
+        builder: (context) =>
+            StandardDeleteDialog(
+              name: manager.name,
+              function: () async {
+                await delete(manager);
+              },
+            ),
       );
     }
+  }
+
+  void filterManagers(String nameManager) {
+    if (nameManager.isEmpty) {
+      _listManagerFilter = _listManager;
+    } else {
+      _listManagerFilter = _listManager.where((manager) =>
+          manager.name.toLowerCase().contains(nameManager.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 }
 
@@ -244,7 +260,7 @@ class ManagersRegisterPage extends StatelessWidget {
                                   state.updateState(value!);
                                 },
                                 items: state.listEstado.map(
-                                  (state) {
+                                      (state) {
                                     return DropdownMenuItem(
                                       value: state,
                                       child: Text(state.sgEstado),
@@ -295,64 +311,82 @@ class ManagersRegisterPage extends StatelessWidget {
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Builder(
-                builder: (context) {
-                  if (state.listManager.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'No managers registered',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    );
-                  } else {
-                    return ListView.builder(
-                      itemCount: state.listManager.length,
-                      itemBuilder: (context, index) {
-                        final manager = state.listManager[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: Card(
-                            shape: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
+              child: Column(
+                children: [
+                  TextField(
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Colors.white),
+                    controller: state.controllerResearch,
+                    onChanged: state.filterManagers,
+                    decoration: decorationSearch(
+                      'Search Managers',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        if (state.listManager.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              'No managers registered',
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.grey),
                             ),
-                            color: Colors.grey[350],
-                            elevation: 3,
-                            shadowColor: Colors.black,
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/managerDataPage',
-                                    arguments: manager);
-                              },
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    color: Colors.white, width: 1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              title: Text(
-                                manager.name,
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              subtitle: Text('CPF: ${manager.cpf}'),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      state.verificationDeleteManager(
-                                          context, manager);
-                                    },
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
+                          );
+                        } else {
+                          return ListView.builder(
+                            itemCount: state.listManager.length,
+                            itemBuilder: (context, index) {
+                              final manager = state.listManager[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: Card(
+                                  shape: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
+                                  color: Colors.grey[350],
+                                  elevation: 3,
+                                  shadowColor: Colors.black,
+                                  child: ListTile(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, '/managerDataPage',
+                                          arguments: manager);
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                          color: Colors.white, width: 1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    title: Text(
+                                      manager.name,
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                    subtitle: Text('CPF: ${manager.cpf}'),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            state.verificationDeleteManager(
+                                                context, manager);
+                                          },
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
-                    );
-                  }
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
           );
