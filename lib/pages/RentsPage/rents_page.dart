@@ -7,6 +7,7 @@ import '../../controllers/vehicles_table.dart';
 import '../../models/customers_model.dart';
 import '../../models/rents_model.dart';
 import '../../models/vehicles_model.dart';
+import '../../pdf/pdf.dart';
 import '../../theme.dart';
 import '../../utils/standard_delete_dialog.dart';
 import '../RentsRegisterPage/rents_register_page.dart';
@@ -401,7 +402,10 @@ class RentsPage extends StatelessWidget {
                                                 MainAxisAlignment.spaceAround,
                                             children: [
                                               TextButton(
-                                                onPressed: () {},
+                                                onPressed: () async {
+                                                  await createPdf(
+                                                      customer, vehicle!, rent);
+                                                },
                                                 child: const Text(
                                                   'VIEW PDF DOCUMENT',
                                                   style: TextStyle(
