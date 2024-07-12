@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/database.dart';
+import '../../controllers/customers_table.dart';
+import '../../controllers/rents_table.dart';
+import '../../controllers/vehicles_table.dart';
 import '../../models/customers_model.dart';
 import '../../models/rents_model.dart';
 import '../../models/vehicles_model.dart';
@@ -9,22 +11,37 @@ import '../../theme.dart';
 import '../../utils/standard_delete_dialog.dart';
 import '../RentsRegisterPage/rents_register_page.dart';
 
+///criacao do state da tela de listagem dos alugueis
 class RentsListPageState extends ChangeNotifier {
+  ///instacia para sempre que vir para tela, chamar a funcao de carregar
   RentsListPageState() {
     load();
   }
 
+  ///controlador de algueis
   final controllerRents = RentsController();
+
+  ///controlador de cliente
   final controllerCustomers = CustomerController();
+
+  ///controlador de veiculo
   final controllerVehicles = VehicleController();
   final _listRents = <RentsModel>[];
+
+  ///map para armazenar todas as informacoes do cliente referente ao aluguel
   final Map<int, CustomerModel> customerInformations = {};
+
+  ///map para armazenar todas as informacoes do veiculo referente ao aluguel
   final Map<int, VehiclesModels> vehiclesInformations = {};
+
+  ///controlador para barra de pesquisa da tela
   final controllerResearch = TextEditingController();
   List<RentsModel> _listRentsFilter = <RentsModel>[];
 
+  ///getter da lista de alugueis
   List<RentsModel> get listRents => _listRentsFilter;
 
+  ///funcao para carregar a tela
   Future<void> load() async {
     final list = await controllerRents.select();
     _listRents.clear();
@@ -52,21 +69,25 @@ class RentsListPageState extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///funcao delete para deletar o aluguel
   Future<void> delete(RentsModel rent) async {
     await controllerRents.delete(rent);
     await load();
     notifyListeners();
   }
 
+  ///funcao de filtragem para a barra de pesquisa de alguel
   void filterRents(String nameRent) async {
-
     if (nameRent.isEmpty) {
       _listRentsFilter = _listRents;
     } else {
       _listRentsFilter = _listRents.where(
         (rent) {
           final vehicle = vehiclesInformations[rent.vehicleId];
-          return vehicle?.model?.name?.toLowerCase().contains(nameRent.toLowerCase()) ?? false;
+          return vehicle?.model?.name
+                  ?.toLowerCase()
+                  .contains(nameRent.toLowerCase()) ??
+              false;
         },
       ).toList();
     }
@@ -178,12 +199,12 @@ class RentsPage extends StatelessWidget {
                                           ),
                                           Row(
                                             children: [
-                                              Icon(Icons.person),
+                                              const Icon(Icons.person),
                                               const SizedBox(
                                                 width: 10,
                                               ),
                                               Text(
-                                                '${customer.name}',
+                                                customer.name,
                                                 style: const TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18),
@@ -197,7 +218,7 @@ class RentsPage extends StatelessWidget {
                                                 width: 10,
                                               ),
                                               Text(
-                                                '${customer?.phone}',
+                                                customer.phone,
                                                 style: const TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18),
@@ -374,7 +395,7 @@ class RentsPage extends StatelessWidget {
                                               ),
                                             ],
                                           ),
-                                          Divider(),
+                                          const Divider(),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceAround,

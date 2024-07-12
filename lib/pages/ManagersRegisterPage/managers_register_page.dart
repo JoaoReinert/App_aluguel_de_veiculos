@@ -1,18 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/database.dart';
+import '../../controllers/customers_table.dart';
+import '../../controllers/managers_table.dart';
+import '../../controllers/states_table.dart';
 import '../../models/managers_model.dart';
 import '../../models/state_model.dart';
 import '../../theme.dart';
 import '../../utils/standard_delete_dialog.dart';
-import '../../utils/standard_form_button.dart';
 import '../../utils/standard_dialog.dart';
+import '../../utils/standard_form_button.dart';
 
 ///provider referente ao estado dos gerentes
 class FunctionManager extends ChangeNotifier {
+  ///key para o formulario de cadastro do gerente
   final managerKey = GlobalKey<FormState>();
 
   ///instancia do provider para sempre que for chamado, ele chamar a funcao load
@@ -22,17 +24,20 @@ class FunctionManager extends ChangeNotifier {
 
   /// Controlador para operações relacionadas aos clientes
   final controller = ManagerController();
+  ///controlador de estado do gerente
   final controllerEstado = EstadoController();
+  ///controlador de cliente
   final controllerCustomer = CustomerController();
 
   final _controllerName = TextEditingController();
   final _controllerCPF = TextEditingController();
   final _controllerState = TextEditingController();
   final _controllerPhone = TextEditingController();
-  final _controllerComission = TextEditingController();
+  final _controllerCommission = TextEditingController();
   EstadoModel? _selectItem;
   final _listManager = <ManagerModel>[];
   final _listEstado = <EstadoModel>[];
+  ///controlador para a barra de pesquisa da tela
   final controllerResearch = TextEditingController();
   List<ManagerModel> _listManagerFilter = <ManagerModel>[];
 
@@ -49,14 +54,15 @@ class FunctionManager extends ChangeNotifier {
   TextEditingController get controllerPhone => _controllerPhone;
 
   /// Getter para o controlador de texto do campo comissao
-  TextEditingController get controllerComission => _controllerComission;
+  TextEditingController get controllerCommission => _controllerCommission;
 
   ///Getter para o controlador de item selecionado (estado)
   EstadoModel? get selectItem => _selectItem;
 
-  /// Getter para a lista de modelos de cliente
+  /// Getter para a lista de modelos de gerente
   List<ManagerModel> get listManager => _listManagerFilter;
 
+  ///getter para a lista de estado
   List<EstadoModel> get listEstado => _listEstado;
 
   /// Função assíncrona para carregar os dados dos gerentes
@@ -75,7 +81,7 @@ class FunctionManager extends ChangeNotifier {
   /// Função assíncrona para inserir um novo gerente
   Future<void> insert() async {
     if (selectItem == null) {
-      print('erroooooooo');
+      return;
     }
 
     final managers = ManagerModel(
@@ -83,7 +89,7 @@ class FunctionManager extends ChangeNotifier {
       cpf: controllerCPF.text,
       state: selectItem!,
       phone: controllerPhone.text,
-      comission: controllerComission.text,
+      comission: controllerCommission.text,
     );
 
     await controller.insert(managers);
@@ -93,7 +99,7 @@ class FunctionManager extends ChangeNotifier {
     controllerCPF.clear();
     _selectItem = null;
     controllerPhone.clear();
-    controllerComission.clear();
+    controllerCommission.clear();
 
     notifyListeners();
   }
@@ -110,13 +116,15 @@ class FunctionManager extends ChangeNotifier {
     _selectItem = newValue;
     notifyListeners();
   }
-
+  ///mascara para formatar o telefone
   MaskTextInputFormatter formatterPhone = MaskTextInputFormatter(
       mask: '(##)#####-####', type: MaskAutoCompletionType.eager);
-
+  ///mascara para formatar o cpf
   MaskTextInputFormatter formatterCpf = MaskTextInputFormatter(
       mask: '###.###.###-##', type: MaskAutoCompletionType.eager);
 
+  ///funcao para verificacao de exclusao do gerente
+  ///se tiver cliente ligado a ele, nao pode excluir
   Future<void> verificationDeleteManager(BuildContext context,
       ManagerModel manager) async {
     final function = await controllerCustomer
@@ -153,7 +161,7 @@ class FunctionManager extends ChangeNotifier {
       );
     }
   }
-
+  ///funcao para filtragem da barra de pesquisa da tela
   void filterManagers(String nameManager) {
     if (nameManager.isEmpty) {
       _listManagerFilter = _listManager;
@@ -288,7 +296,7 @@ class ManagersRegisterPage extends StatelessWidget {
                                 },
                               ),
                               TextFormField(
-                                controller: state.controllerComission,
+                                controller: state.controllerCommission,
                                 keyboardType: TextInputType.number,
                                 style: const TextStyle(
                                     fontSize: 15, color: Colors.black),
@@ -315,7 +323,7 @@ class ManagersRegisterPage extends StatelessWidget {
                 children: [
                   TextField(
                     cursorColor: Colors.white,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     controller: state.controllerResearch,
                     onChanged: state.filterManagers,
                     decoration: decorationSearch(

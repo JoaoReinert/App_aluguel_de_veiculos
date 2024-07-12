@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_final_lince/pages/VehicleListPage/vehicle_list_page.dart';
+
 import 'models/customers_model.dart';
 import 'models/managers_model.dart';
-import 'models/rents_model.dart';
 import 'models/vehicles_model.dart';
 import 'pages/CustomerDataPage/customer_data_page.dart';
 import 'pages/CustomerRegistrationPage/customer_registration_page.dart';
@@ -12,6 +11,7 @@ import 'pages/ManagersRegisterPage/managers_register_page.dart';
 import 'pages/RentsPage/rents_page.dart';
 import 'pages/RentsRegisterPage/rents_register_page.dart';
 import 'pages/VehicleDataPage/vehicle_data_page.dart';
+import 'pages/VehicleListPage/vehicle_list_page.dart';
 import 'pages/VehicleRegistrationPage/vehicle_registration_page.dart';
 import 'theme.dart';
 

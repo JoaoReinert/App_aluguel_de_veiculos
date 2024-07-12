@@ -27,7 +27,7 @@ class CustomerModel {
   ///gerente responsavel pelo cliente
   late ManagerModel? manager;
 
-  ///instacia do modelo para ser obrigatorio a passagem de dados
+  ///construtor
   CustomerModel(
       {this.id,
       required this.name,

@@ -1,63 +1,66 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:dropdown_search/dropdown_search.dart';
-import '../../controllers/database.dart';
+
+import '../../controllers/vehicles_table.dart';
 import '../../models/brands_model.dart';
 import '../../models/vehicle_models_model.dart';
 import '../../models/vehicles_model.dart';
 import '../../models/year_model.dart';
 import '../../theme.dart';
 
+///criacao do estado da tela
 class VehicleState extends ChangeNotifier {
 
-  // VehicleState() {
-  //   load();
-  // }
-
+  ///key para o fomrulario de registro de veiculo
   final vehicleKey = GlobalKey<FormState>();
-
+  ///controlador de veiculo para pegar funcoes no banco de dados
   final controller = VehicleController();
-
-  List<String> vehicleTypes = ['Cars', 'Motorcycles', 'Trucks'];
+  ///lista de tipos de veiculos para filtragem
+  List<String> vehicleTypes = <String>['Cars', 'Motorcycles', 'Trucks'];
   String? _selectedType;
+  ///lista de marcas do veiculo
   List<BrandsModel> vehicleBrands = [];
   BrandsModel? _selectedBrand;
+  ///lista de modelos do veiculo
   List<ModelsModel> vehicleModels = [];
   ModelsModel? _selectedModel;
+  ///lista de anos do veiculo
   List<YearModel> vehicleYear = [];
   YearModel? _selectedYear;
   final _controllerPlate = TextEditingController();
   final _controllerDailyRate = TextEditingController();
   final _listVehicles = <VehiclesModels>[];
-
+  ///getter para o tipo selecionado do veiculo
   String? get selectedType => _selectedType;
-
+  ///getter para a marca selecionado do veiculo
   BrandsModel? get selectedBrand => _selectedBrand;
-
+  ///getter para o modelo selecionado do veiculo
   ModelsModel? get selectedModel => _selectedModel;
-
+  ///getter para o ano selecionado do veiculo
   YearModel? get selectedYear => _selectedYear;
-
+  ///controlador da placa para o formulario
   TextEditingController get controllerPlate => _controllerPlate;
-
+  ///controlador do preço da diaria para o formulario
   TextEditingController get controllerDailyRate => _controllerDailyRate;
-
+  ///controlador da lista de veiculos
   List<VehiclesModels> get listVehicle => _listVehicles;
 
+  ///funcao para carregar a pagina certinha quando for chamada
   Future<void> load() async {
     final list = await controller.select();
     _listVehicles.clear();
     _listVehicles.addAll(list);
     notifyListeners();
   }
-
+  ///funcao para inserir o veiculo na tabela de veiculos do banco
   Future<void> insert() async {
       final vehicles = VehiclesModels(
           type: selectedType,
@@ -82,35 +85,37 @@ class VehicleState extends ChangeNotifier {
       notifyListeners();
   }
 
+  ///funcao para deletar o veiculo
   Future<void> delete(VehiclesModels vehicle) async {
     await controller.delete(vehicle);
     await load();
     notifyListeners();
   }
 
+  ///funcao para colocar o tipo de veiculo no drop down
   void updateType(String newValue) {
     _selectedType = newValue.toLowerCase();
     showBrands();
     notifyListeners();
   }
-
+  ///funcao para colocar a marca do veiculo no drop down
   void updateBrand(BrandsModel newValue) {
     _selectedBrand = newValue;
     showModels();
     notifyListeners();
   }
-
+  ///funcao para colocar o modelo de veiculo no drop down
   void updateModel(ModelsModel newValue) {
     _selectedModel = newValue;
     showYear();
     notifyListeners();
   }
-
+  ///funcao para colocar o ano de veiculo no drop down
   void updateYear(YearModel newValue) {
     _selectedYear = newValue;
     notifyListeners();
   }
-
+  ///funcao para carregar todas as marcas da api de acordo com o tipo de veiculo
   Future<void> showBrands() async {
     if (selectedType != null) {
       _selectedBrand = null;
@@ -125,7 +130,8 @@ class VehicleState extends ChangeNotifier {
       notifyListeners();
     }
   }
-
+  ///funcao para carregar todos os modelos da api de acordo com
+  ///o tipo de veiculo e marca
   Future<void> showModels() async {
     if (selectedBrand != null) {
       _selectedModel = null;
@@ -141,7 +147,8 @@ class VehicleState extends ChangeNotifier {
       notifyListeners();
     }
   }
-
+  ///funcao para carregar todos os anos da api de acordo com o tipo de veiculo,
+  ///a marca e o modelo
   Future<void> showYear() async {
     if (selectedModel != null) {
       _selectedYear = null;
@@ -156,22 +163,21 @@ class VehicleState extends ChangeNotifier {
         for (final it in data) {
           vehicleYear.add(YearModel.fromJson(it));
         }
-      } else {
-        print('erro');
       }
       notifyListeners();
     }
   }
-
+  ///lista de imagens do veiculo
   List<File>? vehiclesImages = [];
 
+  ///funcao para pegar essas imagens
   Future<void> pickImages(ImageSource source) async {
-    ImagePicker imagePicker = ImagePicker();
-    ImageCropper imageCropper = ImageCropper();
-    XFile? pickedImage = await imagePicker.pickImage(source: source);
+    var imagePicker = ImagePicker();
+    var imageCropper = ImageCropper();
+    var pickedImage = await imagePicker.pickImage(source: source);
 
     if (pickedImage != null) {
-      CroppedFile? cropped = await imageCropper.cropImage(
+      var cropped = await imageCropper.cropImage(
           sourcePath: pickedImage.path,
           aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
           compressQuality: 100,
@@ -185,6 +191,7 @@ class VehicleState extends ChangeNotifier {
     }
   }
 
+  ///funcao para salvar as imagens
   Future<void> saveImages() async {
     final appDocumentsDirectory = await getApplicationSupportDirectory();
 
@@ -193,7 +200,6 @@ class VehicleState extends ChangeNotifier {
 
     if (!appDirectoryImages.existsSync()) {
       await appDirectoryImages.create();
-      print('Diretório de imagens criado em: $pathImages');
     }
 
     final pathVehicles = '${appDocumentsDirectory.path}/images/vehicles';
@@ -201,7 +207,7 @@ class VehicleState extends ChangeNotifier {
 
     if (!appDirectoryVehicles.existsSync()) {
       await appDirectoryVehicles.create();
-      print('Diretório de veículos criado em: $pathVehicles');
+
     }
     final appDirectoryNameVehicles = _controllerPlate.text.trim();
     final pathIdVehicles =
@@ -210,26 +216,27 @@ class VehicleState extends ChangeNotifier {
 
     if (!appDirectoryVehiclesId.existsSync()) {
       await appDirectoryVehiclesId.create(recursive: true);
-      print('Diretório do veículo criado em: $pathIdVehicles');
+
     }
 
     try {
-      for (int i = 0; i < vehiclesImages!.length; i++) {
+      for (var i = 0; i < vehiclesImages!.length; i++) {
         final vehicleImage = vehiclesImages![i];
         final fileVehicle = File('${appDirectoryVehiclesId.path}/$i.png');
-        print('Salvando imagem em: ${fileVehicle.path}');
+
         final bytes = await vehicleImage.readAsBytes();
 
         await fileVehicle.writeAsBytes(bytes);
-        print('SALVOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU');
+
       }
     } catch (e, trace) {
-      print('error: $e, $trace -----------------------------------');
+      print('error: $e, $trace');
     }
   }
 }
-
+///criacao da pagina
 class VehicleRegister extends StatelessWidget {
+  ///construtor
   const VehicleRegister({super.key});
 
   @override
@@ -266,7 +273,7 @@ class VehicleRegister extends StatelessWidget {
                           dropdownDecoratorProps: dropdownDecoration('Type'),
                           popupProps: PopupProps.menu(
                             searchFieldProps: searchFieldDecoration(),
-                            constraints: BoxConstraints(maxHeight: 300),
+                            constraints: const BoxConstraints(maxHeight: 300),
                             menuProps: menuPropsDecoration(),
                             showSearchBox: true,
                           ),
@@ -284,7 +291,7 @@ class VehicleRegister extends StatelessWidget {
                           },
                           selectedItem: state.selectedType,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         DropdownSearch<BrandsModel>(
@@ -296,7 +303,7 @@ class VehicleRegister extends StatelessWidget {
                             showSearchBox: true,
                           ),
                           items: state.vehicleBrands,
-                          itemAsString: (BrandsModel brands) => brands.name!,
+                          itemAsString: (brands) => brands.name!,
                           onChanged: (value) {
                             if (value != null) {
                               state.updateBrand(value);
@@ -310,7 +317,7 @@ class VehicleRegister extends StatelessWidget {
                           },
                           selectedItem: state.selectedBrand,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         DropdownSearch<ModelsModel>(
@@ -322,7 +329,7 @@ class VehicleRegister extends StatelessWidget {
                             showSearchBox: true,
                           ),
                           items: state.vehicleModels,
-                          itemAsString: (ModelsModel models) => models.name!,
+                          itemAsString: (models) => models.name!,
                           onChanged: (value) {
                             if (value != null) {
                               state.updateModel(value);
@@ -336,7 +343,7 @@ class VehicleRegister extends StatelessWidget {
                           },
                           selectedItem: state.selectedModel,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         Row(
@@ -352,7 +359,7 @@ class VehicleRegister extends StatelessWidget {
                                   showSearchBox: true,
                                 ),
                                 items: state.vehicleYear,
-                                itemAsString: (YearModel year) => year.name!,
+                                itemAsString: (year) => year.name!,
                                 onChanged: (value) {
                                   if (value != null) {
                                     state.updateYear(value);
@@ -387,7 +394,7 @@ class VehicleRegister extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         TextFormField(
@@ -403,7 +410,7 @@ class VehicleRegister extends StatelessWidget {
                             return null;
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         GestureDetector(
@@ -444,7 +451,7 @@ class VehicleRegister extends StatelessWidget {
                               );
                             },
                           ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         ElevatedButton(
@@ -495,19 +502,19 @@ class VehicleRegister extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.photo, color: Colors.grey),
-                title: Text('Galery'),
+                leading: const Icon(Icons.photo, color: Colors.grey),
+                title: const Text('Galery'),
                 onTap: () {
                   Navigator.of(context).pop();
                   state.pickImages(ImageSource.gallery);
                 },
               ),
               ListTile(
-                leading: Icon(
+                leading: const Icon(
                   Icons.camera_alt,
                   color: Colors.grey,
                 ),
-                title: Text('Camera'),
+                title: const Text('Camera'),
                 onTap: () {
                   Navigator.of(context).pop();
                   state.pickImages(ImageSource.camera);

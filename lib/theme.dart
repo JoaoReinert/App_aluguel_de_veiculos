@@ -1,7 +1,6 @@
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+///criacao do tema do app
 ThemeData theme(BuildContext context) {
   final theme = Theme.of(context);
   return theme.copyWith(
@@ -9,7 +8,7 @@ ThemeData theme(BuildContext context) {
     textTheme: Typography.blackCupertino,
     appBarTheme: const AppBarTheme(
       elevation: 8,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(20)
         )
@@ -29,7 +28,7 @@ ThemeData theme(BuildContext context) {
         color: Colors.grey,
       ),
     ),
-    datePickerTheme: DatePickerThemeData(
+    datePickerTheme: const DatePickerThemeData(
       backgroundColor: Colors.white,
       dayStyle: TextStyle(color: Colors.blue),
       yearStyle: TextStyle(color: Colors.blue),
@@ -39,7 +38,7 @@ ThemeData theme(BuildContext context) {
 
   );
 }
-
+///decoracao da barra de pesquisa
 InputDecoration decorationSearch(String text) {
   return InputDecoration(
     hintText: text,
@@ -67,7 +66,7 @@ InputDecoration decorationSearch(String text) {
     prefixIcon: const Icon(Icons.search, color: Colors.white),
   );
 }
-
+///decoracao dos formularios
 InputDecoration decorationForm(String label) {
   return InputDecoration(
     label: Text(label),
@@ -92,15 +91,15 @@ InputDecoration decorationForm(String label) {
     ),
   );
 }
-
+///decoracao do props do drop down de pesquisa
 MenuProps menuPropsDecoration() {
   return MenuProps(
-    backgroundColor: Color(0xFFDDEEFF),
+    backgroundColor: const Color(0xFFDDEEFF),
     borderRadius: BorderRadius.circular(8),
     shadowColor: Colors.black
   );
 }
-
+///decoracao do drop down
 DropDownDecoratorProps dropdownDecoration(String label) {
   return DropDownDecoratorProps(
     dropdownSearchDecoration: InputDecoration(
@@ -131,10 +130,10 @@ DropDownDecoratorProps dropdownDecoration(String label) {
         ),
       ),
     ),
-    baseStyle: TextStyle(color: Colors.black, fontSize: 17),
+    baseStyle: const TextStyle(color: Colors.black, fontSize: 17),
   );
 }
-
+///decoracao do drop down de pesquisa
 TextFieldProps searchFieldDecoration() {
   return const TextFieldProps(
     decoration: InputDecoration(

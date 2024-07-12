@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 
+///criacao do dialogo reutilizavel para cadastro
 class StandardDialog extends StatelessWidget {
-  ///instancia da classe
-  const StandardDialog({
+  ///construtor
+  const StandardDialog({super.key,
     required this.title,
     this.actions,
     required this.items,
      this.formKey
   });
-
+  ///variavel para o titulo do dialog
   final String title;
+  ///armazena os botoes de save e cancel
   final Widget? actions;
+  ///armazena os campos de texti
   final List<Widget> items;
+  ///key para os formularios
   final GlobalKey<FormState>? formKey;
 
   @override

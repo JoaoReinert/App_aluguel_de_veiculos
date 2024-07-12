@@ -5,18 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/database.dart';
+import '../../controllers/vehicles_table.dart';
 import '../../models/vehicles_model.dart';
 import '../../theme.dart';
 import '../../utils/standard_dialog.dart';
-
+///criacao do state da tela
 class VehicleDataPageState extends ChangeNotifier {
+  ///variavel do veiculo selecionado
   final VehiclesModels vehicle;
+  ///controlador de preço para poder editar
   final TextEditingController controllerPrice = TextEditingController();
+  ///controlador de veiculo para pode editar
   final controllerVehicle = VehicleController();
 
+  ///construtor
   VehicleDataPageState(this.vehicle);
-
+  ///funcao para edit do preço
   Future<void> updatePrice(BuildContext context, String newPrice) async {
     vehicle.dailyRate = newPrice;
     await controllerVehicle.updatePrice(vehicle.id!, newPrice);
@@ -24,14 +28,17 @@ class VehicleDataPageState extends ChangeNotifier {
   }
 
 }
-
+///criacao da tela
 class VehicleDataPage extends StatelessWidget {
-  VehicleDataPage({super.key, required this.vehicle});
-
+  ///construtor
+  const VehicleDataPage({super.key, required this.vehicle});
+  ///variavel do veiculo
   final VehiclesModels vehicle;
 
+  ///funcao para pegar a imagem daquele veiculo de acordo com a placa
   Future<List<String>> pickImages(String plate) async {
-    final List<String> imagesPath = [];
+    ///lista que armazena as imagens
+    final imagesPath = <String>[];
     final appDocumentsDirectory = await getApplicationSupportDirectory();
 
     final images = '${appDocumentsDirectory.path}/images/vehicles/$plate';
@@ -293,7 +300,7 @@ class VehicleDataPage extends StatelessWidget {
                                   },
                                 );
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                             ),
                           ],
                         ),

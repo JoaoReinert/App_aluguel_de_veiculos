@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../pages/ManagersRegisterPage/managers_register_page.dart';
 
 ///criacao da estilizacao do botao de cadastro para as telas
 class StandardFormButton extends StatelessWidget {
@@ -14,9 +13,9 @@ class StandardFormButton extends StatelessWidget {
 
   ///funcao para na tela poder passar uma funcao quando ele ser precionado
   final void Function() onpressed;
-
+  ///icone do botao
   final Icon icon;
-
+  ///texto do botao
   final String label;
 
   @override
@@ -31,7 +30,7 @@ class StandardFormButton extends StatelessWidget {
       icon: icon,
       label: Text(
         label,
-        style: TextStyle(color: Colors.blue),
+        style: const TextStyle(color: Colors.blue),
       ),
     );
   }

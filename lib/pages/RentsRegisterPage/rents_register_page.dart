@@ -4,49 +4,75 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../controllers/database.dart';
+import '../../controllers/customers_table.dart';
+import '../../controllers/rents_table.dart';
 import '../../models/customers_model.dart';
 import '../../models/rents_model.dart';
 import '../../models/vehicles_model.dart';
 import '../../theme.dart';
 
+///extensao para adicionar funcionalidades ao datetime
 extension DateExtension on DateTime {
+  ///funcao para formatar a data ao brasileiro
   String dateFormater() {
-    return "${this.day.toString().padLeft(2, '0')}/${this.month.toString().padLeft(2, '0')}/${this.year}";
+    return "${day.toString().padLeft(2, '0')}/${month.toString().padLeft(2, '0')}/$year";
   }
 }
 
+///criacao do state da tela de registro de alugueis
 class RentsRegisterState extends ChangeNotifier {
-
+  ///instancia para carregar sempre que a tela for carregada
   RentsRegisterState(this.vehicle) {
     load();
   }
 
+  ///key para o formulario de aluguel
   final rentsKey = GlobalKey<FormState>();
 
+  ///variavel de veiculo para pegar informacoes do veiculo
   final VehiclesModels vehicle;
+
+  ///lista de nomes de todos os cliente
   List<String> customerNames = [];
+
+  ///lista de todos os clientes para pegar a comissao do seu
+  ///gerente responsavel
   List<CustomerModel> customers = [];
+
+  ///variavel de dias totais do aluguel
   int totalDays = 0;
+
+  ///variavel para preço do aluguel
   double price = 0.0;
+
+  ///variavel para a comissao do gerente
   double managerComission = 0.0;
 
+  ///controlador de cliente
   final controller = CustomerController();
+
+  ///controlador de aluguel
   final controllerRent = RentsController();
 
   CustomerModel? _selectedCustomer;
 
+  ///armazena a data incial do alguel
   TextEditingController initialDateController = TextEditingController();
+
+  ///armazena a data final do alguel
   TextEditingController finalDateController = TextEditingController();
 
+  ///armazena o cliente selecionado no elevanted button
   CustomerModel? get selectedCustomer => _selectedCustomer;
 
+  ///funcao para ser chamada toda vez que a pagina for carregada
   Future<void> load() async {
     customers = await controller.select();
     customerNames = customers.map((pickName) => pickName.name).toList();
     notifyListeners();
   }
 
+  ///funcao para inserir o aluguel na tabela de alguel do banco de dados
   Future<void> insert() async {
     if (vehicle.id == null || _selectedCustomer == null) {
       return;
@@ -72,14 +98,16 @@ class RentsRegisterState extends ChangeNotifier {
     finalDateController.clear();
   }
 
+  ///funcao para formatar a data
   DateTime date(String date) {
     final barrier = date.split('/');
     return DateTime(
         int.parse(barrier[2]), int.parse(barrier[1]), int.parse(barrier[0]));
   }
 
+  ///funcao para pegar a data inicial do aluguel
   Future<void> selectInitialDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
+    var picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
@@ -94,11 +122,16 @@ class RentsRegisterState extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///funcao para pegar a data final do aluguel de acordo com a data inicial
   Future<void> selectFinalDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
+    var picked = await showDatePicker(
       context: context,
-      initialDate: initialDateController.text.isEmpty ? DateTime.now() : date(initialDateController.text),
-      firstDate: initialDateController.text.isEmpty ? DateTime.now() : date(initialDateController.text),
+      initialDate: initialDateController.text.isEmpty
+          ? DateTime.now()
+          : date(initialDateController.text),
+      firstDate: initialDateController.text.isEmpty
+          ? DateTime.now()
+          : date(initialDateController.text),
       lastDate: DateTime(2026),
     );
     if (picked != null) {
@@ -110,32 +143,35 @@ class RentsRegisterState extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///funcao para calcular quantos dias vai dar o aluguel
   void calculateDays() {
     if (initialDateController.text.isNotEmpty &&
         finalDateController.text.isNotEmpty) {
       //convertendo as stringds para datetime
-      DateTime initialDate = DateTime.parse(
+      var initialDate = DateTime.parse(
           initialDateController.text.split('/').reversed.join('-'));
-      DateTime finalDate = DateTime.parse(
+      var finalDate = DateTime.parse(
           finalDateController.text.split('/').reversed.join('-'));
-      Duration totalNumbersOfDay = finalDate.difference(initialDate);
+      var totalNumbersOfDay = finalDate.difference(initialDate);
       totalDays = totalNumbersOfDay.inDays;
 
       notifyListeners();
     }
   }
 
+  ///funcao para calcular o preço do aluguel
   void calculatePrice() {
-    double dailyRate = double.parse(vehicle.dailyRate);
-    double totalDaysDouble = totalDays.toDouble();
+    var dailyRate = double.parse(vehicle.dailyRate);
+    var totalDaysDouble = totalDays.toDouble();
     price = totalDaysDouble * dailyRate;
     notifyListeners();
   }
 
+  ///funcao para calcular a comissao do gerente daquele alguel
   void calculateManagerComission() {
     if (_selectedCustomer != null && _selectedCustomer!.manager != null) {
-      double comission = double.parse(_selectedCustomer!.manager!.comission);
-      double formattedComission = comission / 100;
+      var comission = double.parse(_selectedCustomer!.manager!.comission);
+      var formattedComission = comission / 100;
       managerComission = price * formattedComission;
     } else {
       managerComission = 0.0;
@@ -143,6 +179,7 @@ class RentsRegisterState extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///funcao para pegar o cliente com o elevanted button
   void updateCustomer(String customerName) {
     _selectedCustomer =
         customers.firstWhere((customer) => customer.name == customerName);
@@ -151,9 +188,12 @@ class RentsRegisterState extends ChangeNotifier {
   }
 }
 
+///criacao da tela
 class RentsRegisterPage extends StatelessWidget {
+  ///construtor
   const RentsRegisterPage({super.key, required this.vehicle});
 
+  ///variavel do veiculo do aluguel
   final VehiclesModels vehicle;
 
   @override
@@ -342,8 +382,9 @@ class RentsRegisterPage extends StatelessWidget {
                             if (state.rentsKey.currentState!.validate()) {
                               state.insert();
                               Navigator.pushReplacementNamed(
-                                  context, '/rentsPage',
-                                  );
+                                context,
+                                '/rentsPage',
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(

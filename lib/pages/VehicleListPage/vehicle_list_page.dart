@@ -3,25 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/database.dart';
+import '../../controllers/rents_table.dart';
+import '../../controllers/vehicles_table.dart';
 import '../../models/vehicles_model.dart';
 import '../../theme.dart';
 import '../../utils/standard_delete_dialog.dart';
 import '../../utils/standard_form_button.dart';
 
+///criacao do state da tela
 class FunctionsListVehicle extends ChangeNotifier {
+  ///toda vez que a tela for chamada ela seja carregada
   FunctionsListVehicle() {
     load();
   }
 
+  ///controlador de veiculos para pegar funcoes do banco
   final controller = VehicleController();
+
+  ///controlador de aluguel para pegar funcoes do banco
   final controllerRent = RentsController();
   final _listVehicle = <VehiclesModels>[];
   List<VehiclesModels> _listVehicleFilter = <VehiclesModels>[];
+
+  ///controlador para a barra de pesquisa da tela
   final controllerResearch = TextEditingController();
 
+  ///getter para a lista de veiculos
   List<VehiclesModels> get listVehicle => _listVehicleFilter;
 
+  ///funcao para carregar a page
   Future<void> load() async {
     final list = await controller.select();
     _listVehicle.clear();
@@ -30,12 +40,14 @@ class FunctionsListVehicle extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///funcao para deletar um veiculo
   Future<void> delete(VehiclesModels vehicle) async {
     await controller.delete(vehicle);
     await load();
     notifyListeners();
   }
 
+  ///funcao para pegar a primeira imagem tirada do veiculo
   Future<String?> pickImages(String plate) async {
     final appDocumentsDirectory = await getApplicationSupportDirectory();
 
@@ -44,7 +56,10 @@ class FunctionsListVehicle extends ChangeNotifier {
     return image;
   }
 
-  Future<void> verificationDeleteVehicle (BuildContext context, VehiclesModels vehicle) async {
+  ///funcao para verificacao de exclusao do veiculo, se tiver alugado nao pode
+  ///ser excluido
+  Future<void> verificationDeleteVehicle(
+      BuildContext context, VehiclesModels vehicle) async {
     final function = await controllerRent.rentalVehicleVerification(vehicle.id);
     if (function) {
       showDialog(
@@ -79,7 +94,7 @@ class FunctionsListVehicle extends ChangeNotifier {
       );
     }
   }
-
+  ///funcao de filtragem para a barra de pesquisa da tela
   void filterVehicles(String nameVehicle) {
     if (nameVehicle.isEmpty) {
       _listVehicleFilter = _listVehicle;
@@ -110,7 +125,7 @@ class VehicleListPage extends StatelessWidget {
             title: const Text('Vehicles'),
             actions: [
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: StandardFormButton(
                   onpressed: () async {
                     await Navigator.pushNamed(context, '/vehicleRegisterPage');
@@ -131,7 +146,7 @@ class VehicleListPage extends StatelessWidget {
               children: [
                 TextField(
                   cursorColor: Colors.white,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   controller: state.controllerResearch,
                   onChanged: state.filterVehicles,
                   decoration: decorationSearch(
@@ -217,7 +232,8 @@ class VehicleListPage extends StatelessWidget {
                                   ),
                                   trailing: IconButton(
                                     onPressed: () async {
-                                      await state.verificationDeleteVehicle(context, vehicle);
+                                      await state.verificationDeleteVehicle(
+                                          context, vehicle);
                                     },
                                     icon: const Icon(Icons.delete,
                                         color: Colors.red),

@@ -1,7 +1,6 @@
-import 'package:projeto_final_lince/models/vehicle_models_model.dart';
-import 'package:projeto_final_lince/models/year_model.dart';
-
 import 'brands_model.dart';
+import 'vehicle_models_model.dart';
+import 'year_model.dart';
 
 ///classe modelo dos veiculos
 class VehiclesModels {

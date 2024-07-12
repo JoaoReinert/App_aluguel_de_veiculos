@@ -5,7 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/database.dart';
+import '../../controllers/customers_table.dart';
+import '../../controllers/rents_table.dart';
+import '../../controllers/states_table.dart';
 import '../../models/customers_model.dart';
 import '../../models/state_model.dart';
 import '../../theme.dart';
@@ -26,7 +28,9 @@ class FunctionsCustomer extends ChangeNotifier {
 
   /// Controlador para operações relacionadas aos clientes
   final controller = CustomerController();
+  ///controlador de estado para operacoes relacionadas aos estados
   final controllerEstado = EstadoController();
+  ///controlador de aluguel para operacoes relacionadas aos alugueis
   final controllerRent = RentsController();
 
   final _controllerName = TextEditingController();
@@ -36,7 +40,9 @@ class FunctionsCustomer extends ChangeNotifier {
   EstadoModel? _selectItem;
   final _listCustomer = <CustomerModel>[];
   final _listStates = <EstadoModel>[];
+  ///mensagem de erro referente ao estado do cliente
   String? stateError;
+  /// controlador para a barra de pesquisa da tela
   final controllerResearch = TextEditingController();
   List<CustomerModel> _listCustomerFilter = <CustomerModel>[];
 
@@ -92,7 +98,7 @@ class FunctionsCustomer extends ChangeNotifier {
       return false;
     }
 
-    bool stateManager =
+    var stateManager =
         await controller.stateVerification(selectItem!.cdEstado);
 
     if (!stateManager) {
@@ -108,7 +114,7 @@ class FunctionsCustomer extends ChangeNotifier {
 
   /// Função assíncrona para inserir um novo cliente
   Future<void> insert() async {
-    bool stateValidate = await stateValidator();
+    var stateValidate = await stateValidator();
     if (!stateValidate) {
       return;
     }
@@ -166,12 +172,15 @@ class FunctionsCustomer extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///mascara para formatar o cnpj
   MaskTextInputFormatter formatterCNPJ = MaskTextInputFormatter(
       mask: '##.###.###/####-##', type: MaskAutoCompletionType.eager);
-
+  ///mascara para formatar o cnpj
   MaskTextInputFormatter formatterPhone = MaskTextInputFormatter(
       mask: '(##)#####-####', type: MaskAutoCompletionType.eager);
 
+  ///funcao para verificacao de exclusao do cliente
+  ///se tiver alguel ativo nao pode excluir
   Future<void> verificationDeleteCustomer(
       BuildContext context, CustomerModel customer) async {
     final function =
@@ -210,6 +219,7 @@ class FunctionsCustomer extends ChangeNotifier {
     }
   }
 
+  ///funcao para a barra de pesquisa da tela para filtrar a lista de clientes
   void filterCustomer(String nameCustomer) {
     if (nameCustomer.isEmpty) {
       _listCustomerFilter = _listCustomer;
@@ -270,7 +280,7 @@ class CustomerRegistrationPage extends StatelessWidget {
                                   onPressed: () async {
                                     state.cnpjverified = false;
                                     state.error = false;
-                                    bool validateState =
+                                    var validateState =
                                         await state.stateValidator();
                                     if (state.customerKey.currentState!
                                             .validate() &&
@@ -397,7 +407,7 @@ class CustomerRegistrationPage extends StatelessWidget {
                 children: [
                   TextField(
                     cursorColor: Colors.white,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     controller: state.controllerResearch,
                     onChanged: state.filterCustomer,
                     decoration: decorationSearch(

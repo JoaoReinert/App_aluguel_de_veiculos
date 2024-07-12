@@ -1,4 +1,4 @@
-import 'package:projeto_final_lince/models/state_model.dart';
+import 'state_model.dart';
 
 ///classe modelo dos gerentes
 class ManagerModel {
@@ -16,7 +16,7 @@ class ManagerModel {
   ///estado
   final EstadoModel state;
 
-  ///instacia do modelo para ser obrigatorio a passagem de dados
+  ///construtor
   ManagerModel(
       {this.id,
       required this.name,
