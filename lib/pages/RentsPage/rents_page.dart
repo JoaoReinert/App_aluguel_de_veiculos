@@ -302,7 +302,7 @@ class RentsPage extends StatelessWidget {
                                                 width: 10,
                                               ),
                                               Text(
-                                                'R\$${vehicle?.dailyRate},00',
+                                                formatMoney(double.parse(vehicle!.dailyRate)),
                                                 style: const TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18),
@@ -352,7 +352,9 @@ class RentsPage extends StatelessWidget {
                                                 width: 10,
                                               ),
                                               Text(
-                                                rent.price,
+                                                formatMoney(
+                                                  double.parse(rent.price),
+                                                ),
                                                 style: const TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18),
@@ -389,7 +391,7 @@ class RentsPage extends StatelessWidget {
                                                 width: 10,
                                               ),
                                               Text(
-                                                'Commission: ${rent.managerCommission}',
+                                                'Commission: ${formatMoney(rent.managerCommission)}',
                                                 style: const TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18),
@@ -404,7 +406,7 @@ class RentsPage extends StatelessWidget {
                                               TextButton(
                                                 onPressed: () async {
                                                   await createPdf(
-                                                      customer, vehicle!, rent);
+                                                      customer, vehicle, rent);
                                                 },
                                                 child: const Text(
                                                   'VIEW PDF DOCUMENT',

@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/vehicles_table.dart';
 import '../../models/vehicles_model.dart';
+import '../../pdf/pdf.dart';
 import '../../theme.dart';
 import '../../utils/standard_dialog.dart';
 import '../../utils/vehicle_utils.dart';
@@ -214,7 +214,7 @@ class VehicleDataPage extends StatelessWidget {
                               width: 10,
                             ),
                             Text(
-                              'R\$${vehicle.dailyRate},00',
+                              formatMoney(double.parse(vehicle.dailyRate)),
                               style: const TextStyle(
                                   color: Colors.black, fontSize: 18),
                             ),

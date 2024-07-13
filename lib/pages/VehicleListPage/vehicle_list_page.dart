@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../controllers/rents_table.dart';
 import '../../controllers/vehicles_table.dart';
 import '../../models/vehicles_model.dart';
+import '../../pdf/pdf.dart';
 import '../../theme.dart';
 import '../../utils/standard_delete_dialog.dart';
 import '../../utils/standard_form_button.dart';
@@ -94,6 +95,7 @@ class FunctionsListVehicle extends ChangeNotifier {
       );
     }
   }
+
   ///funcao de filtragem para a barra de pesquisa da tela
   void filterVehicles(String nameVehicle) {
     if (nameVehicle.isEmpty) {
@@ -221,7 +223,8 @@ class VehicleListPage extends StatelessWidget {
                                     children: [
                                       const SizedBox(height: 5),
                                       Text(
-                                        'R\$ ${vehicle.dailyRate},00',
+                                        formatMoney(
+                                            double.parse(vehicle.dailyRate)),
                                         style: const TextStyle(
                                             color: Colors.black, fontSize: 15),
                                       ),
