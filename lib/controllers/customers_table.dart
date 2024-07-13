@@ -172,20 +172,20 @@ class CustomerController {
 
     final result = await database.rawQuery('''
     SELECT ${CustomerTable.tableName}.*, 
-         ${EstadoTable.nmEstado}, 
-         ${EstadoTable.cdEstado}, 
-         ${EstadoTable.sgEstado},
-         ${ManagerTable.tableName}.${ManagerTable.id} as managerId,
+           ${EstadoTable.nmEstado}, 
+           ${EstadoTable.cdEstado}, 
+           ${EstadoTable.sgEstado},
+           ${ManagerTable.tableName}.${ManagerTable.id} as managerId,
            ${ManagerTable.tableName}.${ManagerTable.name} as managerName,
            ${ManagerTable.tableName}.${ManagerTable.cpf} as managerCpf,
            ${ManagerTable.tableName}.${ManagerTable.phone} as managerPhone,
            ${ManagerTable.tableName}.${ManagerTable.comission} as managerComission,
            ${ManagerTable.tableName}.${ManagerTable.codeState} as managerCodeState
     FROM ${CustomerTable.tableName}
-    INNER JOIN ${EstadoTable.tableName}
-    ON ${CustomerTable.tableName}.${CustomerTable.codeState} = ${EstadoTable.tableName}.${EstadoTable.cdEstado}
-    LEFT JOIN ${ManagerTable.tableName}
-    ON ${CustomerTable.tableName}.${CustomerTable.managerId} = ${ManagerTable.tableName}.${ManagerTable.id}
+      INNER JOIN ${EstadoTable.tableName} ON 
+        ${CustomerTable.tableName}.${CustomerTable.codeState} = ${EstadoTable.tableName}.${EstadoTable.cdEstado}
+      LEFT JOIN ${ManagerTable.tableName} ON 
+        ${CustomerTable.tableName}.${CustomerTable.managerId} = ${ManagerTable.tableName}.${ManagerTable.id}
     ''');
 
     var list = <CustomerModel>[];

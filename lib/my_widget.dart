@@ -58,10 +58,16 @@ class MyWidget extends StatelessWidget {
               return RentsRegisterPage(vehicle: vehicle);
             },
           );
+        } else if (settings.name == '/homePage') {
+          final currentIndex = settings.arguments as int?;
+          return MaterialPageRoute(
+            builder: (context) {
+              return HomePage(currentIndex: currentIndex);
+            },
+          );
         }
       },
       routes: {
-        '/homePage': (context) => const HomePage(),
         '/customerRegistrationPage': (context) =>
             const CustomerRegistrationPage(),
         '/managersRegisterPage': (context) => const ManagersRegisterPage(),

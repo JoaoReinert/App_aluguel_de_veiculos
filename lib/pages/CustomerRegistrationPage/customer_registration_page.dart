@@ -441,10 +441,12 @@ class CustomerRegistrationPage extends StatelessWidget {
                                   elevation: 3,
                                   shadowColor: Colors.black,
                                   child: ListTile(
-                                    onTap: () {
-                                      Navigator.pushNamed(
+                                    onTap: () async {
+                                      await Navigator.pushNamed(
                                           context, '/customerDataPage',
                                           arguments: customer);
+
+                                      state.load();
                                     },
                                     shape: RoundedRectangleBorder(
                                       side: const BorderSide(

@@ -14,14 +14,24 @@ class HomeState extends ChangeNotifier {
   late PageController pc;
 
   ///inicializando o controlador
-  HomeState() {
+  HomeState({
+    this.current,
+  }) {
+    if (current != null) {
+      pc = PageController(initialPage: current!);
+      return;
+    }
+
     pc = PageController(initialPage: currentPage);
   }
+
+   int? current;
 
   ///funcao para quando o usuario clicar no icon da pagina desejada
   ///o icon mudar de cor
   void setCurrentPage(int page) {
     currentPage = page;
+    current = currentPage;
     pc.jumpToPage(page);
     notifyListeners();
   }
@@ -30,17 +40,19 @@ class HomeState extends ChangeNotifier {
 ///criacao da home page para ultilizar o bottom navigation bar
 class HomePage extends StatelessWidget {
   ///instancia da classe
-  const HomePage({super.key});
+  const HomePage({super.key, this.currentIndex});
+
+  final int? currentIndex;
 
   @override
   Widget build(BuildContext context) {
     print(
       'Theme.of(context).bottomNavigationBarTheme.backgroundColor: '
-          '${Theme.of(context).bottomNavigationBarTheme.backgroundColor}',
+      '${Theme.of(context).bottomNavigationBarTheme.backgroundColor}',
     );
 
     return ChangeNotifierProvider(
-      create: (_) => HomeState(),
+      create: (_) => HomeState(current: currentIndex),
       child: Consumer<HomeState>(
         builder: (_, state, __) {
           return Scaffold(
@@ -57,7 +69,7 @@ class HomePage extends StatelessWidget {
             ),
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
-              currentIndex: state.currentPage,
+              currentIndex: state.current ?? 0,
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),

@@ -10,6 +10,7 @@ import '../../models/customers_model.dart';
 import '../../models/rents_model.dart';
 import '../../models/vehicles_model.dart';
 import '../../theme.dart';
+import '../HomePage/home_page.dart';
 
 ///extensao para adicionar funcionalidades ao datetime
 extension DateExtension on DateTime {
@@ -381,9 +382,11 @@ class RentsRegisterPage extends StatelessWidget {
                           onPressed: () {
                             if (state.rentsKey.currentState!.validate()) {
                               state.insert();
-                              Navigator.pushReplacementNamed(
+                              Navigator.pushNamedAndRemoveUntil(
                                 context,
-                                '/rentsPage',
+                                '/homePage',
+                                (route) => false,
+                                arguments: 3,
                               );
                             }
                           },

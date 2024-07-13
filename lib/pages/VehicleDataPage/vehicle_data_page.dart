@@ -9,6 +9,7 @@ import '../../controllers/vehicles_table.dart';
 import '../../models/vehicles_model.dart';
 import '../../theme.dart';
 import '../../utils/standard_dialog.dart';
+import '../../utils/vehicle_utils.dart';
 ///criacao do state da tela
 class VehicleDataPageState extends ChangeNotifier {
   ///variavel do veiculo selecionado
@@ -34,28 +35,6 @@ class VehicleDataPage extends StatelessWidget {
   const VehicleDataPage({super.key, required this.vehicle});
   ///variavel do veiculo
   final VehiclesModels vehicle;
-
-  ///funcao para pegar a imagem daquele veiculo de acordo com a placa
-  Future<List<String>> pickImages(String plate) async {
-    ///lista que armazena as imagens
-    final imagesPath = <String>[];
-    final appDocumentsDirectory = await getApplicationSupportDirectory();
-
-    final images = '${appDocumentsDirectory.path}/images/vehicles/$plate';
-    final directory = Directory(images);
-    if (await directory.exists()) {
-      var files = directory.listSync();
-
-      for (var file in files) {
-        if (file.path.contains('.png')) {
-          imagesPath.add(file.path);
-        }
-      }
-      return imagesPath;
-    } else {
-      return imagesPath;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +64,7 @@ class VehicleDataPage extends StatelessWidget {
                   children: [
                     Center(
                       child: FutureBuilder<List<String>>(
-                        future: pickImages(vehicle.plate),
+                        future: vehicle.getImages(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData || snapshot.data!.isEmpty) {
                             return const Icon(
