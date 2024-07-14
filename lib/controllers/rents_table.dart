@@ -3,7 +3,9 @@ import 'package:projeto_final_lince/controllers/vehicles_table.dart';
 import '../models/rents_model.dart';
 import 'customers_table.dart';
 import 'database.dart';
-
+///tabela de alugueis com 2 chaves estrangeiras, 1 para o cliente do aluguel
+///onde para saber as informacoes do tal cliente ele pega pelo id, e a
+///mesma coisa para o veiculo
 class RentsTable {
   static const String createTable = '''
     CREATE TABLE $tableName(
@@ -46,13 +48,15 @@ class RentsTable {
     return map;
   }
 }
-
+///controler de alugueis para funcoes
 class RentsController {
+  ///funcao de deletar a tabela inteira que usei uma vez
+  ///para tratar um erro
   Future<void> deleteTable() async {
     final database = await getDatabase();
     await database.delete(RentsTable.tableName);
   }
-
+  ///funcao para inserir um aluguel na tabela
   Future<void> insert(RentsModel rent) async {
     final database = await getDatabase();
     final map = RentsTable.toMap(rent);
@@ -60,7 +64,7 @@ class RentsController {
     await database.insert(RentsTable.tableName, map);
     return;
   }
-
+  ///funcao para deletar um aluguel na tabela
   Future<void> delete(RentsModel rents) async {
     final database = await getDatabase();
 
@@ -70,7 +74,7 @@ class RentsController {
       whereArgs: [rents.id],
     );
   }
-
+  ///funcao para selecionar os alugueis na tabela
   Future<List<RentsModel>> select() async {
     final database = await getDatabase();
     final List<Map<String, dynamic>> result = await database.query(
@@ -94,6 +98,8 @@ class RentsController {
     return list;
   }
 
+  ///verificao para se o usuario querer deletar um cliente que
+  ///tenha um aluguel ativo, ele nao possa
   Future<bool> rentalCustomerVerification (int? customerId) async {
     final database = await getDatabase();
     final result = await database.rawQuery(
@@ -102,7 +108,8 @@ class RentsController {
     );
     return result.isNotEmpty;
   }
-
+  ///verificao para se o usuario querer deletar um veiculo que
+  ///tenha um aluguel ativo, ele nao possa
   Future<bool> rentalVehicleVerification (int? vehicleId) async {
     final database = await getDatabase();
     final result = await database.rawQuery(

@@ -258,6 +258,8 @@ class ManagersRegisterPage extends StatelessWidget {
                                 validator: (value) {
                                   if (value != null && value.isEmpty) {
                                     return 'Enter the manager CPF';
+                                  } if(value!.length < 10) {
+                                    return 'Invalid CPF';
                                   }
                                   return null;
                                 },
@@ -291,6 +293,9 @@ class ManagersRegisterPage extends StatelessWidget {
                                 validator: (value) {
                                   if (value != null && value.isEmpty) {
                                     return 'Enter the manager telephone number';
+                                  }
+                                  if (value!.length < 10) {
+                                    return 'Invalid number';
                                   }
                                   return null;
                                 },

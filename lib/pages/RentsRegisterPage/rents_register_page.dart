@@ -1,3 +1,5 @@
+
+
 import 'package:dropdown_search/dropdown_search.dart';
 
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import '../../controllers/rents_table.dart';
 import '../../models/customers_model.dart';
 import '../../models/rents_model.dart';
 import '../../models/vehicles_model.dart';
+import '../../pdf/pdf.dart';
 import '../../theme.dart';
 import '../HomePage/home_page.dart';
 
@@ -340,7 +343,7 @@ class RentsRegisterPage extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'R\$${state.price.toStringAsFixed(2)}',
+                                    formatMoney(state.price),
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 20,
@@ -366,7 +369,7 @@ class RentsRegisterPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'R\$${state.managerComission.toStringAsFixed(2)}',
+                                formatMoney(state.managerComission),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 20,

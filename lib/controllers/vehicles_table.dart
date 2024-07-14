@@ -3,7 +3,7 @@ import '../models/vehicle_models_model.dart';
 import '../models/vehicles_model.dart';
 import '../models/year_model.dart';
 import 'database.dart';
-
+///criacao da tabela de veiculos do app
 class VehicleTable {
   static const String createTable = '''
   CREATE TABLE $tableName(
@@ -41,8 +41,10 @@ class VehicleTable {
     return map;
   }
 }
-
+///controler de veiculo para criacao de funcoes
 class VehicleController {
+  ///funcao para pegar um veiculo pelo seu id, para usar
+  ///na parte de dados do aluguel
   Future<VehiclesModels?> selectId(int vehicleId) async {
     final database = await getDatabase();
     final result = await database.query(
@@ -65,6 +67,7 @@ class VehicleController {
     return null;
   }
 
+  ///insere um veiculo na tabela quando cadastrado
   Future<void> insert(VehiclesModels vehicle) async {
     final database = await getDatabase();
     final map = VehicleTable.toMap(vehicle);
@@ -72,7 +75,7 @@ class VehicleController {
     await database.insert(VehicleTable.tableName, map);
     return;
   }
-
+  ///deleta um veiculo na tabela
   Future<void> delete(VehiclesModels vehicle) async {
     final database = await getDatabase();
 
@@ -82,7 +85,7 @@ class VehicleController {
       whereArgs: [vehicle.id],
     );
   }
-
+  ///select para todos os veiculos
   Future<List<VehiclesModels>> select() async {
     final database = await getDatabase();
     final List<Map<String, dynamic>> result = await database.query(
@@ -104,7 +107,7 @@ class VehicleController {
     }
     return list;
   }
-
+  ///funcao para poder editar o preço do veiculo
   Future<void> updatePrice(int vehicleId, String newPrice) async {
     final database = await getDatabase();
     await database.update(

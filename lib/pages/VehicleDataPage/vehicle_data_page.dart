@@ -18,6 +18,8 @@ class VehicleDataPageState extends ChangeNotifier {
   final TextEditingController controllerPrice = TextEditingController();
   ///controlador de veiculo para pode editar
   final controllerVehicle = VehicleController();
+  ///chave para edicao do preço
+  final editVehicleKey = GlobalKey<FormState>();
 
   ///construtor
   VehicleDataPageState(this.vehicle);
@@ -224,6 +226,7 @@ class VehicleDataPage extends StatelessWidget {
                                   context: context,
                                   builder: (context) {
                                     return StandardDialog(
+                                      formKey: state.editVehicleKey,
                                       title: 'Edit Daily Rate',
                                       actions: Row(
                                         mainAxisAlignment:
@@ -241,12 +244,15 @@ class VehicleDataPage extends StatelessWidget {
                                           ),
                                           TextButton(
                                             onPressed: () {
-                                              final newPrice =
-                                                  state.controllerPrice.text;
-                                              if (newPrice.isNotEmpty) {
-                                                state.updatePrice(context,
-                                                    state.controllerPrice.text);
-                                                Navigator.pop(context);
+                                              if (state.editVehicleKey.currentState!.validate()) {
+                                                final newPrice =
+                                                    state.controllerPrice.text;
+                                                if (newPrice.isNotEmpty) {
+                                                  state.updatePrice(context,
+                                                      state.controllerPrice
+                                                          .text);
+                                                  Navigator.pop(context);
+                                                }
                                               }
                                             },
                                             child: const Text(

@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/state_model.dart';
 import 'database.dart';
-
+///tabela de estados do brasil com inserts de sigla e nome
 class EstadoTable {
   static const String createTable = '''
    CREATE TABLE $tableName (
@@ -60,8 +60,10 @@ class EstadoTable {
     return map;
   }
 }
-
+///controler de estados para pegar todos os estado e colocar no drop
+///down button
 class EstadoController {
+  ///pega todos os estados
   Future<List<EstadoModel>> select() async {
     final database = await getDatabase();
     final List<Map<String, dynamic>> result = await database.query(

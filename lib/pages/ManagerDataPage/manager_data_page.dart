@@ -15,6 +15,8 @@ class ManagerDataPageState extends ChangeNotifier {
 
   ///controlador de nome para edicao
   final TextEditingController controllerName = TextEditingController();
+  ///chave para editar
+  final editManagerKey = GlobalKey<FormState>();
 
   ///controlador de cpf para edicao
   final TextEditingController controllerCPF = TextEditingController();
@@ -226,6 +228,7 @@ class ManagerDataPage extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return StandardDialog(
+                                formKey: state.editManagerKey,
                                 title: 'Edit Name',
                                 actions: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -241,12 +244,16 @@ class ManagerDataPage extends StatelessWidget {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        final newName =
-                                            state.controllerName.text;
-                                        if (newName.isNotEmpty) {
-                                          state.updateName(context,
-                                              state.controllerName.text);
-                                          Navigator.pop(context);
+                                        if (state
+                                            .editManagerKey.currentState!
+                                            .validate()) {
+                                          final newName =
+                                              state.controllerName.text;
+                                          if (newName.isNotEmpty) {
+                                            state.updateName(context,
+                                                state.controllerName.text);
+                                            Navigator.pop(context);
+                                          }
                                         }
                                       },
                                       child: const Text(
@@ -289,6 +296,7 @@ class ManagerDataPage extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return StandardDialog(
+                                formKey: state.editManagerKey,
                                 title: 'Edit CPF',
                                 actions: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -304,11 +312,16 @@ class ManagerDataPage extends StatelessWidget {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        final newCpf = state.controllerCPF.text;
-                                        if (newCpf.isNotEmpty) {
-                                          state.updateCPF(context,
-                                              state.controllerCPF.text);
-                                          Navigator.pop(context);
+                                        if (state.editManagerKey.currentState!.validate()) {
+                                          final newCpf = state.controllerCPF
+                                              .text;
+                                          if (newCpf.isNotEmpty) {
+                                            state.updateCPF(context,
+                                                state.controllerCPF.text);
+                                            Navigator.pop(context);
+                                          }
+                                        } else {
+                                          state.editManagerKey.currentState!.validate();
                                         }
                                       },
                                       child: const Text(
@@ -329,6 +342,9 @@ class ManagerDataPage extends StatelessWidget {
                                     validator: (value) {
                                       if (value != null && value.isEmpty) {
                                         return 'Enter the new CPF';
+                                      }
+                                      if (value!.length != 14) {
+                                        return 'Invalid CPF';
                                       }
                                       return null;
                                     },
@@ -358,6 +374,7 @@ class ManagerDataPage extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return StandardDialog(
+                                formKey: state.editManagerKey,
                                 title: 'Edit Phone',
                                 actions: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -373,12 +390,14 @@ class ManagerDataPage extends StatelessWidget {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        final newPhone =
-                                            state.controllerPhone.text;
-                                        if (newPhone.isNotEmpty) {
-                                          state.updatePhone(context,
-                                              state.controllerPhone.text);
-                                          Navigator.pop(context);
+                                        if (state.editManagerKey.currentState!.validate()) {
+                                          final newPhone =
+                                              state.controllerPhone.text;
+                                          if (newPhone.isNotEmpty) {
+                                            state.updatePhone(context,
+                                                state.controllerPhone.text);
+                                            Navigator.pop(context);
+                                          }
                                         }
                                       },
                                       child: const Text(
@@ -400,6 +419,9 @@ class ManagerDataPage extends StatelessWidget {
                                       if (value != null && value.isEmpty) {
                                         return 'Enter the new phone';
                                       }
+                                       if (value!.length < 11) {
+                                        return 'Phone invalid';
+                                      }
                                       return null;
                                     },
                                   ),
@@ -420,6 +442,7 @@ class ManagerDataPage extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return StandardDialog(
+                                formKey: state.editManagerKey,
                                 title: 'Edit commission',
                                 actions: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -435,12 +458,15 @@ class ManagerDataPage extends StatelessWidget {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        final newComission =
-                                            state.controllerCommission.text;
-                                        if (newComission.isNotEmpty) {
-                                          state.updateCommission(context,
-                                              state.controllerCommission.text);
-                                          Navigator.pop(context);
+                                        if (state.editManagerKey.currentState!.validate()) {
+                                          final newComission =
+                                              state.controllerCommission.text;
+                                          if (newComission.isNotEmpty) {
+                                            state.updateCommission(context,
+                                                state.controllerCommission
+                                                    .text);
+                                            Navigator.pop(context);
+                                          }
                                         }
                                       },
                                       child: const Text(

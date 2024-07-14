@@ -24,7 +24,8 @@ class HomeState extends ChangeNotifier {
 
     pc = PageController(initialPage: currentPage);
   }
-
+  ///index para usar na tela de quando salva o aluguel
+  ///ele ir pra page com a bottom navigation bar
    int? current;
 
   ///funcao para quando o usuario clicar no icon da pagina desejada
@@ -41,15 +42,12 @@ class HomeState extends ChangeNotifier {
 class HomePage extends StatelessWidget {
   ///instancia da classe
   const HomePage({super.key, this.currentIndex});
-
+  ///index para usar na tela de quando salva o aluguel
+  ///ele ir pra page com a bottom navigation bar
   final int? currentIndex;
 
   @override
   Widget build(BuildContext context) {
-    print(
-      'Theme.of(context).bottomNavigationBarTheme.backgroundColor: '
-      '${Theme.of(context).bottomNavigationBarTheme.backgroundColor}',
-    );
 
     return ChangeNotifierProvider(
       create: (_) => HomeState(current: currentIndex),

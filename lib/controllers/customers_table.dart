@@ -5,7 +5,8 @@ import 'database.dart';
 import 'managers_table.dart';
 import 'states_table.dart';
 
-///criacao da tabela de clientes
+///criacao da tabela de clientes com 2 chaves estrangeiras, code state referenciando
+///a tabela de estados e manager id a tabela de manager
 class CustomerTable {
   static const String createTable = '''
   CREATE TABLE $tableName(
@@ -52,8 +53,9 @@ class CustomerTable {
   }
 }
 
-///classe para criancao de metodos insert e delete
+///controler para criancao de funcoes
 class CustomerController {
+  ///funcao para pegar um cliente pelo id dele e o retornar
   Future<CustomerModel?> selectId(int customerId) async {
     final database = await getDatabase();
     final result = await database.rawQuery('''
@@ -107,7 +109,7 @@ class CustomerController {
     }
     return null;
   }
-
+  ///funcao para ver se existe um cliente registrado com um estado especifico
   Future<bool> registeredStatesVerification(int stateCode) async {
     final database = await getDatabase();
     final result = await database.rawQuery(
@@ -117,7 +119,7 @@ class CustomerController {
     return result.isNotEmpty;
   }
 
-//funcao para cadastrar apenas clientes dos estados que ja tem gerentes
+///funcao para cadastrar apenas clientes dos estados que ja tem gerentes
   Future<bool> stateVerification(int state) async {
     final database = await getDatabase();
     final result = await database.query(
@@ -222,7 +224,7 @@ class CustomerController {
 
     return list;
   }
-
+  ///funcao para editar o nome
   Future<void> updateName (int customerId, String newName) async {
     final database = await getDatabase();
     await database.update(
@@ -232,7 +234,7 @@ class CustomerController {
       whereArgs: [customerId],
     );
   }
-
+  ///funcao para editar o telefone
   Future<void> updatePhone (int customerId, String newPhone) async {
     final database = await getDatabase();
     await database.update(
@@ -242,7 +244,7 @@ class CustomerController {
       whereArgs: [customerId],
     );
   }
-
+  ///funcao para editar a cidade
   Future<void> updateCity (int customerId, String newCity) async {
     final database = await getDatabase();
     await database.update(

@@ -1,9 +1,9 @@
-import 'package:projeto_final_lince/controllers/states_table.dart';
-
 import '../models/managers_model.dart';
 import '../models/state_model.dart';
 import 'database.dart';
-
+import 'states_table.dart';
+///criacao da tabela de gerentes com uma chave estrangeira que referencia
+///a tabela de estados
 class ManagerTable {
   static const String createTable = '''
    CREATE TABLE $tableName (
@@ -41,7 +41,9 @@ class ManagerTable {
   }
 }
 
+///controler de gerentes para criacao de funcoes
 class ManagerController {
+  ///funcao insert para inserir gerente na tabela
   Future<void> insert(ManagerModel manager) async {
     final database = await getDatabase();
     final map = ManagerTable.toMap(manager);
@@ -49,14 +51,14 @@ class ManagerController {
 
     return;
   }
-
+  ///funcao delete para deletar gerente na tabela
   Future<void> delete(ManagerModel manager) async {
     final database = await getDatabase();
 
     database.delete(ManagerTable.tableName,
         where: '${ManagerTable.id} = ?', whereArgs: [manager.id]);
   }
-
+  ///funcao select para selecionar os gerentes na tabela
   Future<List<ManagerModel>> select() async {
     final database = await getDatabase();
 
@@ -84,7 +86,7 @@ class ManagerController {
     }
     return list;
   }
-
+  ///funcao para editar o nome de um gerente na tabela
   Future<void> updateName(int managerId, String newName) async {
     final database = await getDatabase();
     await database.update(
@@ -94,7 +96,7 @@ class ManagerController {
       whereArgs: [managerId],
     );
   }
-
+  ///funcao para editar o cpf de um gerente na tabela
   Future<void> updateCPF(int managerId, String newCPF) async {
     final database = await getDatabase();
     await database.update(
@@ -104,7 +106,7 @@ class ManagerController {
       whereArgs: [managerId],
     );
   }
-
+  ///funcao para editar o telefone de um gerente na tabela
   Future<void> updatePhone(int managerId, String newPhone) async {
     final database = await getDatabase();
     await database.update(
@@ -114,7 +116,7 @@ class ManagerController {
       whereArgs: [managerId],
     );
   }
-
+  ///funcao para editar a comissao de um gerente na tabela
   Future<void> updateCommission(int managerId, String newCommission) async {
     final database = await getDatabase();
     await database.update(

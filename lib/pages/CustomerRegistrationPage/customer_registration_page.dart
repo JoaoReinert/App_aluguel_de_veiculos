@@ -345,6 +345,8 @@ class CustomerRegistrationPage extends StatelessWidget {
                                 validator: (value) {
                                   if (value != null && value.isEmpty) {
                                     return 'Enter the telephone number';
+                                  } if (value!.length < 10) {
+                                    return 'Invalid number';
                                   }
                                   return null;
                                 },

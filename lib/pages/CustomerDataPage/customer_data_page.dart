@@ -10,7 +10,7 @@ import '../../utils/standard_edit_button.dart';
 
 ///state da tela de detalhes do cliente
 class CustomerDataPageState extends ChangeNotifier {
-  ///variavel para controlar o cliente e pegar as variaveis dele
+  ///instancia de um cliente
   final CustomerModel customer;
 
   ///controlador de nome para edição
@@ -27,6 +27,10 @@ class CustomerDataPageState extends ChangeNotifier {
 
   ///construtor
   CustomerDataPageState(this.customer);
+
+  /// criando a variavel da chave de edit para
+  /// validacao do mesmo
+  final editCustomerKey = GlobalKey<FormState>();
 
   ///funcao para edicao do nome do cliente
   Future<void> updateName(BuildContext context, String newName) async {
@@ -278,6 +282,7 @@ class CustomerDataPage extends StatelessWidget {
                               context: context,
                               builder: (context) {
                                 return StandardDialog(
+                                  formKey: state.editCustomerKey,
                                   title: 'Edit Name',
                                   actions: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -293,12 +298,16 @@ class CustomerDataPage extends StatelessWidget {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          final newName =
-                                              state.controllerName.text;
-                                          if (newName.isNotEmpty) {
-                                            state.updateName(context,
-                                                state.controllerName.text);
-                                            Navigator.pop(context);
+                                          if (state
+                                              .editCustomerKey.currentState!
+                                              .validate()) {
+                                            final newName =
+                                                state.controllerName.text;
+                                            if (newName.isNotEmpty) {
+                                              state.updateName(context,
+                                                  state.controllerName.text);
+                                              Navigator.pop(context);
+                                            }
                                           }
                                         },
                                         child: const Text(
@@ -341,6 +350,7 @@ class CustomerDataPage extends StatelessWidget {
                               context: context,
                               builder: (context) {
                                 return StandardDialog(
+                                  formKey: state.editCustomerKey,
                                   title: 'Edit Phone',
                                   actions: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -356,12 +366,19 @@ class CustomerDataPage extends StatelessWidget {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          final newPhone =
-                                              state.controllerPhone.text;
-                                          if (newPhone.isNotEmpty) {
-                                            state.updatePhone(context,
-                                                state.controllerPhone.text);
-                                            Navigator.pop(context);
+                                          if (state
+                                              .editCustomerKey.currentState!
+                                              .validate()) {
+                                            final newPhone =
+                                                state.controllerPhone.text;
+                                            if (newPhone.isNotEmpty) {
+                                              state.updatePhone(context,
+                                                  state.controllerPhone.text);
+                                              Navigator.pop(context);
+                                            }
+                                          } else {
+                                            state.editCustomerKey.currentState!
+                                                .validate();
                                           }
                                         },
                                         child: const Text(
@@ -382,6 +399,9 @@ class CustomerDataPage extends StatelessWidget {
                                       validator: (value) {
                                         if (value != null && value.isEmpty) {
                                           return 'Enter the new phone';
+                                        }
+                                        if (value!.length < 11) {
+                                          return 'Phone invalid';
                                         }
                                         return null;
                                       },
@@ -411,6 +431,7 @@ class CustomerDataPage extends StatelessWidget {
                               context: context,
                               builder: (context) {
                                 return StandardDialog(
+                                  formKey: state.editCustomerKey,
                                   title: 'Edit City',
                                   actions: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -426,12 +447,16 @@ class CustomerDataPage extends StatelessWidget {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          final newCity =
-                                              state.controllerCity.text;
-                                          if (newCity.isNotEmpty) {
-                                            state.updateCity(context,
-                                                state.controllerCity.text);
-                                            Navigator.pop(context);
+                                          if (state
+                                              .editCustomerKey.currentState!
+                                              .validate()) {
+                                            final newCity =
+                                                state.controllerCity.text;
+                                            if (newCity.isNotEmpty) {
+                                              state.updateCity(context,
+                                                  state.controllerCity.text);
+                                              Navigator.pop(context);
+                                            }
                                           }
                                         },
                                         child: const Text(
