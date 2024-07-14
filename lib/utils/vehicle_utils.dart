@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/vehicles_model.dart';
-
+///extensao do modelo de veiculo para pegar as imagens do veiculo
 extension VehicleExtension on VehiclesModels {
   /// funcao para pegar a imagem daquele veiculo de acordo com a placa
   Future<List<String>> getImages() async {

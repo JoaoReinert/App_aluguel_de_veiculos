@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-
+///dialog de delete
 class StandardDeleteDialog extends StatelessWidget {
+  ///construtor
   StandardDeleteDialog({super.key, required this.name, required this.function});
-
+  ///nome que vai aparecer no dialog
   String name;
+  ///funcao do dialog
   final Function() function;
 
   @override
@@ -25,7 +27,7 @@ class StandardDeleteDialog extends StatelessWidget {
           style: TextButton.styleFrom(
             backgroundColor: Colors.transparent,
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: Colors.black),
+              side: const BorderSide(width: 1, color: Colors.black),
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -48,7 +50,7 @@ class StandardDeleteDialog extends StatelessWidget {
             function();
             Navigator.pop(context);
           },
-          child: Text('Yes', style: TextStyle(color: Colors.black)),
+          child: const Text('Yes', style: TextStyle(color: Colors.black)),
         ),
       ],
     );
